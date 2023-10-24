@@ -64,3 +64,7 @@ $ forge --help
 $ anvil --help
 $ cast --help
 ```
+
+---
+
+Copyright (C) 2023 PT Services DMCC
