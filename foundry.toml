@@ -9,7 +9,9 @@ solc = '0.8.21'
 ffi = true
 fs_permissions = [
   { access = "read", path = "scripts/config.json" },
+  { access = "read", path = "script/1.0.0/input.json" }
 ]
+
 remappings = [
     "@openzeppelin/contracts=lib/openzeppelin-contracts/contracts",
     "@openzeppelin/contracts-upgradeable=lib/openzeppelin-contracts-upgradeable/contracts"

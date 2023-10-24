@@ -8,4 +8,4 @@ lcov.info
 .vscode
 
 broadcast/*/31337
-deployments/31337.*
+deployments/**/31337.*

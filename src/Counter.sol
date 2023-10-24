@@ -6,6 +6,10 @@ import {ICounter, IVersioned} from "./interface/ICounter.sol";
 contract Counter is ICounter {
     uint256 public number;
 
+    constructor(uint256 initialNumber) {
+        number = initialNumber;
+    }
+
     /// @inheritdoc ICounter
     function setNumber(uint256 newNumber) public {
         number = newNumber;
