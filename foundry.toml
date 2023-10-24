@@ -10,6 +10,10 @@ ffi = true
 fs_permissions = [
   { access = "read", path = "scripts/config.json" },
 ]
+remappings = [
+    "@openzeppelin/contracts=lib/openzeppelin-contracts/contracts",
+    "@openzeppelin/contracts-upgradeable=lib/openzeppelin-contracts-upgradeable/contracts"
+]
 
 [profile.intense.fuzz]
 runs = 10000
