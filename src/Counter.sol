@@ -1,14 +1,23 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.13;
+pragma solidity 0.8.21;
 
-contract Counter {
+import {ICounter, IVersioned} from "./interface/ICounter.sol";
+
+contract Counter is ICounter {
     uint256 public number;
 
+    /// @inheritdoc ICounter
     function setNumber(uint256 newNumber) public {
         number = newNumber;
     }
 
+    /// @inheritdoc ICounter
     function increment() public {
         number++;
+    }
+
+    /// @inheritdoc IVersioned
+    function version() external pure returns (string memory) {
+        return "1.0.0";
     }
 }
