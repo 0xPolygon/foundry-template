@@ -15,7 +15,7 @@ async function main() {
   if (!scriptName?.length) scriptName = "Deploy.s.sol";
   const commitHash = getCommitHash();
   const data = JSON.parse(
-    readFileSync(join(__dirname, `../../broadcast/${scriptName}/${chainId}/run-latest.json`), "utf-8")
+    readFileSync(join(__dirname, `../../broadcast/${scriptName}/${chainId}/run-latest.json`), "utf-8"),
   );
   const config = JSON.parse(readFileSync(join(__dirname, "../config.json"), "utf-8"));
   const input = JSON.parse(readFileSync(join(__dirname, `../${version}/input.json`), "utf-8"));
@@ -26,14 +26,14 @@ async function main() {
   if (!existsSync(join(__dirname, "../../deployments/"))) mkdirSync(join(__dirname, "../../deployments/"));
   if (!existsSync(join(__dirname, "../../deployments/json/"))) mkdirSync(join(__dirname, "../../deployments/json/"));
   const out = JSON.parse(
-    (existsSync(outPath) && readFileSync(outPath, "utf-8")) || JSON.stringify({ chainId, latest: {}, history: [] })
+    (existsSync(outPath) && readFileSync(outPath, "utf-8")) || JSON.stringify({ chainId, latest: {}, history: [] }),
   );
 
   const timestamp = data.timestamp;
   let latestContracts = {};
   if (Object.keys(out.latest).length === 0) {
     const deployedContractsMap = new Map(
-      [...deployments].map(({ contractAddress, contractName }) => [contractAddress, contractName])
+      [...deployments].map(({ contractAddress, contractName }) => [contractAddress, contractName]),
     );
 
     // first deployment
@@ -52,13 +52,13 @@ async function main() {
           timestamp,
           deploymentTxn: hash,
           commitHash,
-        }))
+        })),
     );
     const nonProxies = await Promise.all(
       deployments
         .filter(
           ({ contractName }) =>
-            contractName !== "TransparentUpgradeableProxy" && !proxies.find((p) => p.contractName === contractName)
+            contractName !== "TransparentUpgradeableProxy" && !proxies.find((p) => p.contractName === contractName),
         )
         .map(async ({ contractName, contractAddress, hash }) => ({
           address: contractAddress,
@@ -68,7 +68,7 @@ async function main() {
           timestamp,
           deploymentTxn: hash,
           commitHash,
-        }))
+        })),
     );
     const contracts = [...proxies, ...nonProxies].reduce((obj, { contractName, ...rest }) => {
       obj[contractName] = rest;
@@ -94,15 +94,15 @@ async function main() {
         const currentImplementation = getImplementationAddress(
           out.latest[contractName].address,
           "0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc",
-          rpcUrl
+          rpcUrl,
         );
         if (currentImplementation === out.latest[contractName].implementation)
           throw new Error(
-            `Implementation for ${contractName}(${out.latest[contractName].address}) did not change - ${currentImplementation}, deployed - ${contractAddress}`
+            `Implementation for ${contractName}(${out.latest[contractName].address}) did not change - ${currentImplementation}, deployed - ${contractAddress}`,
           );
         if (currentImplementation !== contractAddress)
           throw new Error(
-            `Implementation mismatch for ${contractName}(${out.latest[contractName].address}), onchain - ${currentImplementation}, deployed - ${contractAddress}`
+            `Implementation mismatch for ${contractName}(${out.latest[contractName].address}), onchain - ${currentImplementation}, deployed - ${contractAddress}`,
           );
 
         // currentImplementation === contractAddress
@@ -127,7 +127,7 @@ async function main() {
     }
 
     const deployedContractsMap = new Map(
-      Object.entries(out.latest).map(([contractName, { address }]) => [address.toLowerCase(), contractName])
+      Object.entries(out.latest).map(([contractName, { address }]) => [address.toLowerCase(), contractName]),
     );
 
     for (const { transaction, transactionType } of data.transactions) {
@@ -235,7 +235,7 @@ function generateMarkdown(input) {
           .replace(/([A-Z])/g, "-$1")
           .trim()
           .slice(1)
-          .toLowerCase()})`
+          .toLowerCase()})`,
     )
     .join("\n\t- ");
   out += `\n- [Deployment History](#deployment-history)`;
@@ -258,7 +258,7 @@ function generateMarkdown(input) {
       <td>${contractName}</td>
       <td><a href="${getEtherscanLink(input.chainId, address)}" target="_blank">${address}</a></td>
       <td>${version || `N/A`}</td>
-      </tr>`
+      </tr>`,
     )
     .join("\n");
   out += `</table>\n`;
@@ -293,7 +293,7 @@ ${generateProxyInformationIfProxy({
   proxyAdmin,
   history: input.history,
   chainId: input.chainId,
-})}`
+})}`,
     )
     .join("\n\n --- \n\n");
 
@@ -366,9 +366,9 @@ function generateProxyInformationIfProxy({
         <td><a href="${getEtherscanLink(chainId, implementation)}" target="_blank">${implementation}</a></td>
         <td><a href="https://github.com/0xPolygon/pol-token/commit/${commitHash}" target="_blank">${commitHash.slice(
           0,
-          7
+          7,
         )}</a></td>
-    </tr>`
+    </tr>`,
       )
       .join("")}
 </table>
@@ -426,7 +426,7 @@ Deployed contracts:
                     getEtherscanLink(chainId, contract.implementation) || contract.implementation
                   }))`
                 : ``
-            }`
+            }`,
         )
         .join("\n- ")}
 
@@ -443,12 +443,12 @@ Deployed contracts:
 <tr>
     <td>${key}</td>
     <td>${value}</td>
-</tr>`
+</tr>`,
       )
       .join("\n")}
 </table>
 </details>
-    `
+    `,
     )
     .join("\n\n");
 
@@ -489,7 +489,7 @@ function validateInputs() {
     )
   ) {
     console.log(
-      `error: script/${version}/input.json or script/${version}/${scriptName || "<scriptName>"} does not exist\n`
+      `error: script/${version}/input.json or script/${version}/${scriptName || "<scriptName>"} does not exist\n`,
     );
     printUsageAndExit = true;
   }
