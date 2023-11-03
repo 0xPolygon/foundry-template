@@ -2,11 +2,12 @@
 pragma solidity 0.8.21;
 
 import {ICounter, IVersioned} from "./interface/ICounter.sol";
+import {Initializable} from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
-contract Counter is ICounter {
+contract Counter is ICounter, Initializable {
     uint256 public number;
 
-    constructor(uint256 initialNumber) {
+    function initialize(uint256 initialNumber) public initializer {
         number = initialNumber;
     }
 
