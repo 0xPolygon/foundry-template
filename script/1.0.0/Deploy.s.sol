@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.21;
+pragma solidity 0.8.22;
 
 import "forge-std/Script.sol";
-import "script/util/Helpers.sol";
+import "script/util/ScriptHelpers.sol";
 
 import {ProxyAdmin} from "@openzeppelin/contracts/proxy/transparent/ProxyAdmin.sol";
 
 import "script/deployers/DeployCounter.s.sol";
 
-contract Deploy is Script, Helpers, CounterDeployer {
+contract Deploy is Script, ScriptHelpers, CounterDeployer {
     using stdJson for string;
 
     address internal proxyAdmin;
@@ -22,6 +22,6 @@ contract Deploy is Script, Helpers, CounterDeployer {
         vm.broadcast(deployerPrivateKey);
         proxyAdmin = address(new ProxyAdmin(input.readAddress($("ProxyAdmin.initialOwner"))));
 
-        (counter,,) = deployCounter(address(proxyAdmin), input.readUint($("Counter.number")));
+        (counter, , ) = deployCounter(address(proxyAdmin), input.readUint($("Counter.number")));
     }
 }
