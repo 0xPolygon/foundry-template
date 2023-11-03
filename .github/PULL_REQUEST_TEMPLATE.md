@@ -14,20 +14,21 @@ Please describe the tests that you ran to verify your changes. Provide instructi
 
 Before deployment
 
-- [ ]  100% test and branch coverage
-- [ ]  fuzz and invariant tests when applicable
-- [ ]  deployment or update scripts ready
-- [ ]  version management agreed upon and implemented
-- [ ]  documentation of work in Jira or Notion
-- [ ]  internal team review
-- [ ]  **Security Team review**
-
+- [ ] 100% test and branch coverage
+- [ ] fuzz and invariant tests when applicable
+- [ ] deployment or update scripts ready
+- [ ] version management agreed upon and implemented
+- [ ] documentation of work in Jira or Notion
+- [ ] internal team review
+- [ ] **Security Team review**
 
 After deployment
 
-- [ ]  Update [static](https://github.com/maticnetwork/static/tree/master/network) with new contract address and/or version
-- [ ]  create release if necessary
+- [ ] Update [static](https://github.com/maticnetwork/static/tree/master/network) with new contract address and/or version
+- [ ] create release if necessary
+
 ---
+
 ### Considerations
 
 - I have followed the [contributing guidelines](../CONTRIBUTING.md).
@@ -38,7 +39,6 @@ After deployment
 - My changes generate no new warnings
 - I have added tests that prove my fix is effective or that my feature works
 - New and existing unit tests pass locally with my changes
-
 
 ### Additional context
 

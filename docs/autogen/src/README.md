@@ -1,73 +1,45 @@
-## Foundry
+## Template Repo (Foundry)
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+This is a brief summary of the project.
+What are its core features and what is its role in the bigger ecosystem
 
-[![CI Status](../../actions/workflows/test.yaml/badge.svg)](../../actions)
+Want to contribute to this project?
+Check [CONTRIBUTING.md](CONTRIBUTING.md)
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+#### Table of Contents
 
-Foundry consists of:
+[Setup](#setup)  
+[Compilation](#compilation)  
+[Testing](#testing)  
+[Deployment](#deployment)  
+[Architecture](#architecture)  
+[License](#license)
 
-- **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
-- **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
-- **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
-- **Chisel**: Fast, utilitarian, and verbose solidity REPL.
-
-## Documentation
-
-https://book.getfoundry.sh/
-
-## Usage
-
-### Build
+## Compilation
 
 ```shell
 $ forge build
 ```
 
-### Test
+### Testing
 
 ```shell
 $ forge test
 ```
 
-### Format
-
-```shell
-$ forge fmt
-```
-
-### Gas Snapshots
-
-```shell
-$ forge snapshot
-```
-
-### Anvil
-
-```shell
-$ anvil
-```
-
-### Deploy
+## Deployment
 
 ```shell
 $ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
 ```
 
-### Cast
+## Architecture
 
-```shell
-$ cast <subcommand>
-```
+Add explanations and graphs to help poeple understand how the contracts of this repo work together.
 
-### Help
+## License
 
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
-```
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ---
 

@@ -1,8 +1,8 @@
 # Counter
-[Git Source](https://github.com/0xPolygon/foundry-template/blob/8d1e780e7b907a30a740d7d96eeb5db9fb0b1450/src/Counter.sol)
+[Git Source](https://github.com/0xPolygon/foundry-template/blob/a9f2dec0535500e07491e0f2e99dcf48319d8022/src/Counter.sol)
 
 **Inherits:**
-[ICounter](/docs/autogen/src/src/interface/ICounter.sol/interface.ICounter.md)
+[ICounter](/docs/autogen/src/src/interface/ICounter.sol/interface.ICounter.md), Initializable
 
 
 ## State Variables
@@ -14,11 +14,11 @@ uint256 public number;
 
 
 ## Functions
-### constructor
+### initialize
 
 
 ```solidity
-constructor(uint256 initialNumber);
+function initialize(uint256 initialNumber) public initializer;
 ```
 
 ### setNumber

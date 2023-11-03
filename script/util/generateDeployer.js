@@ -83,7 +83,7 @@ if (fileNameParts.length > 1) {
 
 if (!replacementPathToExample || !newFilePath) {
   console.error(
-    "Usage: node script/util/generateDeployer.js <path/to/Contract.sol> [type arg, ...] <where/to/generate/>"
+    "Usage: node script/util/generateDeployer.js <path/to/Contract.sol> [type arg, ...] <where/to/generate/>",
   );
   process.exit(1);
 }
