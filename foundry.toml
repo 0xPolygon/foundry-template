@@ -6,6 +6,7 @@ optimizer = true
 optimize_runs = 999999
 via_ir = true
 solc = '0.8.21'
+verbosity = 2
 ffi = true
 fs_permissions = [
   { access = "read", path = "scripts/config.json" },
