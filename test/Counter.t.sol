@@ -1,23 +1,30 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.21;
 
-import {Test, console2} from "forge-std/Test.sol";
-import {Counter} from "../src/Counter.sol";
+import "forge-std/Test.sol";
 
-contract CounterTest is Test {
-    Counter public counter;
+import "script/1.0.0/Deploy.s.sol";
 
+contract CounterTest is Test, Deploy {
     function setUp() public {
-        counter = new Counter(1);
-        counter.setNumber(0);
+        run();
     }
 
-    function test_Increment() public {
+    function test_IsInitialized() public {
+        assertEq(counter.number(), 3);
+    }
+
+    function test_RevertsIf_AlreadyInitialized() public {
+        vm.expectRevert(Initializable.InvalidInitialization.selector);
+        counter.initialize(1);
+    }
+
+    function test_IncrementsNumber() public {
         counter.increment();
-        assertEq(counter.number(), 1);
+        assertEq(counter.number(), 4);
     }
 
-    function testFuzz_SetNumber(uint256 x) public {
+    function testFuzz_SetsNumber(uint256 x) public {
         counter.setNumber(x);
         assertEq(counter.number(), x);
     }
