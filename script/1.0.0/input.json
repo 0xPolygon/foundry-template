@@ -1,11 +1,14 @@
 {
-    "1": {
-        "num": 1
-    },
-    "5": {
-        "num": 2
-    },
+    "1": {},
+
+    "5": {},
+
     "31337": {
-        "num": 3
+        "ProxyAdmin": {
+            "initialOwner": "0x48789ECd4317eCc8dBdB1d06EF39F01c5862a941"
+        },
+        "Counter": {
+            "number": 3
+        }
     }
 }

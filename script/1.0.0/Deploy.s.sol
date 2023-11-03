@@ -1,23 +1,27 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.21;
 
-import {Script, stdJson, console2 as console} from "forge-std/Script.sol";
+import "forge-std/Script.sol";
+import "script/util/Helpers.sol";
 
-import {Counter} from "../../src/Counter.sol";
+import {ProxyAdmin} from "@openzeppelin/contracts/proxy/transparent/ProxyAdmin.sol";
 
-contract Deploy is Script {
+import "script/deployers/DeployCounter.s.sol";
+
+contract Deploy is Script, Helpers, CounterDeployer {
     using stdJson for string;
+
+    address internal proxyAdmin;
+
+    Counter internal counter;
 
     function run() public {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
         string memory input = vm.readFile("script/1.0.0/input.json");
-        string memory chainIdSlug = string(abi.encodePacked('["', vm.toString(block.chainid), '"]'));
-        uint256 num = input.readUint(string.concat(chainIdSlug, ".num"));
 
-        vm.startBroadcast(deployerPrivateKey);
+        vm.broadcast(deployerPrivateKey);
+        proxyAdmin = address(new ProxyAdmin(input.readAddress($("ProxyAdmin.initialOwner"))));
 
-        new Counter(num);
-
-        vm.stopBroadcast();
+        (counter, , ) = deployCounter(address(proxyAdmin), input.readUint($("Counter.number")));
     }
 }
