@@ -5,7 +5,7 @@ repos:
       - id: mixed-line-ending
         args: ["--fix=lf"]
         description: Forces to replace line ending by the UNIX 'lf' character.
-        exclude: "^docs/html"
+        exclude: "^docs/autogen"
   - repo: local
     hooks:
       - id: format
@@ -27,4 +27,4 @@ repos:
     hooks:
       - id: prettier
         name: Format non solidity files with prettier
-        exclude: "^docs/html"
+        exclude: "^docs/autogen"

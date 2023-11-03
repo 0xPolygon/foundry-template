@@ -1,11 +1,11 @@
 #!/bin/bash
 
 # generate docs
-forge doc -b -o docs/html
+forge doc -b -o docs/autogen
 
 # Unstage all docs where only the commit hash changed
 # Get a list of all unstaged files in the directory
-files=$(git diff --name-only -- 'docs/html/*')
+files=$(git diff --name-only -- 'docs/autogen/*')
 
 # Loop over each file
 for file in $files; do

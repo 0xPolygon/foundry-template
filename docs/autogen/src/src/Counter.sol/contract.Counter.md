@@ -1,8 +1,8 @@
 # Counter
-[Git Source](https://github.com/0xPolygon/foundry-template/blob/8733bac54bd9be835d614ad4c7c76632d78ceaa0/src/Counter.sol)
+[Git Source](https://github.com/0xPolygon/foundry-template/blob/8d1e780e7b907a30a740d7d96eeb5db9fb0b1450/src/Counter.sol)
 
 **Inherits:**
-[ICounter](/docs/html/src/src/interface/ICounter.sol/interface.ICounter.md)
+[ICounter](/docs/autogen/src/src/interface/ICounter.sol/interface.ICounter.md)
 
 
 ## State Variables
