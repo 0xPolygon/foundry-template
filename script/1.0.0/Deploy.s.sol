@@ -22,6 +22,6 @@ contract Deploy is Script, ScriptHelpers, CounterDeployer {
         vm.broadcast(deployerPrivateKey);
         proxyAdmin = address(new ProxyAdmin(input.readAddress($("ProxyAdmin.initialOwner"))));
 
-        (counter, , ) = deployCounter(address(proxyAdmin), input.readUint($("Counter.number")));
+        (counter,,) = deployCounter(address(proxyAdmin), input.readUint($("Counter.number")));
     }
 }

@@ -1,5 +1,5 @@
 # Counter
-[Git Source](https://github.com/0xPolygon/foundry-template/blob/a9f2dec0535500e07491e0f2e99dcf48319d8022/src/Counter.sol)
+[Git Source](https://github.com/0xPolygon/foundry-template/blob/1982945ef9a5f6e6ec018759f8fcd1f51129ed46/src/Counter.sol)
 
 **Inherits:**
 [ICounter](/docs/autogen/src/src/interface/ICounter.sol/interface.ICounter.md), Initializable
@@ -23,7 +23,7 @@ function initialize(uint256 initialNumber) public initializer;
 
 ### setNumber
 
-set the number
+Sets the number.
 
 
 ```solidity
@@ -33,12 +33,12 @@ function setNumber(uint256 newNumber) public;
 
 |Name|Type|Description|
 |----|----|-----------|
-|`newNumber`|`uint256`|the new number|
+|`newNumber`|`uint256`|The new number.|
 
 
 ### increment
 
-increment the number by 1
+Increments the number by 1.
 
 
 ```solidity
@@ -55,6 +55,6 @@ function version() external pure returns (string memory);
 
 |Name|Type|Description|
 |----|----|-----------|
-|`<none>`|`string`|the version of the contract|
+|`<none>`|`string`|The version of the contract.|
 
 

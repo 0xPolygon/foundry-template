@@ -10,7 +10,7 @@ abstract contract BeforeScript is Test, TestHelpers, CounterDeployer {
     Counter internal counter;
 
     function setUp() public {
-        (counter, , ) = deployCounter_NoInit(makeAddr(""));
+        (counter,,) = deployCounter_NoInit(makeAddr(""));
     }
 }
 
