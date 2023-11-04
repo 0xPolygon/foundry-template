@@ -1,5 +1,5 @@
 # IVersioned
-[Git Source](https://github.com/0xPolygon/foundry-template/blob/1982945ef9a5f6e6ec018759f8fcd1f51129ed46/src/interface/IVersioned.sol)
+[Git Source](https://github.com/0xPolygon/foundry-template/blob/55b07186cd4779cbe55cc2f262f992aeabaf34ad/src/interface/IVersioned.sol)
 
 
 ## Functions
@@ -13,6 +13,6 @@ function version() external pure returns (string memory);
 
 |Name|Type|Description|
 |----|----|-----------|
-|`<none>`|`string`|The version of the contract.|
+|`<none>`|`string`|The version of the contract|
 
 
