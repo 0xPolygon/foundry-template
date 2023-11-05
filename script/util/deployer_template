@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.21;
+pragma solidity 0.8.22;
 
 import "forge-std/Script.sol";
 
@@ -10,7 +10,7 @@ abstract contract <Example>Deployer is Script {
     function deploy<Example>(
         address proxyAdmin,
         <uint256 arg>
-    ) internal returns (<Example> proxyAs<Example>, address proxy, address logic) {
+    ) internal returns (<Example> proxyAs<Example>, address logic) {
         bytes memory initData = abi.encodeCall(<Example>.initialize, (<arg>));
 
         return _deploy<Example>(proxyAdmin, initData);
@@ -18,21 +18,19 @@ abstract contract <Example>Deployer is Script {
 
     function deploy<Example>_NoInit(
         address proxyAdmin
-    ) internal returns (<Example> proxyAs<Example>, address proxy, address logic) {
+    ) internal returns (<Example> proxyAs<Example>, address logic) {
         return _deploy<Example>(proxyAdmin, "");
     }
 
     function _deploy<Example>(
         address proxyAdmin,
         bytes memory initData
-    ) private returns (<Example> proxyAs<Example>, address proxy, address logic) {
+    ) private returns (<Example> proxyAs<Example>, address logic) {
         vm.startBroadcast(vm.envUint("PRIVATE_KEY"));
 
         logic = address(new <Example>());
-        proxy = address(new TransparentUpgradeableProxy(logic, proxyAdmin, initData));
+        proxyAs<Example> = <Example>(address(new TransparentUpgradeableProxy(logic, proxyAdmin, initData)));
 
         vm.stopBroadcast();
-
-        proxyAs<Example> = <Example>(proxy);
     }
 }

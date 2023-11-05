@@ -11,7 +11,7 @@ import "script/deployers/DeployCounter.s.sol";
 contract Deploy is Script, ScriptHelpers, CounterDeployer {
     using stdJson for string;
 
-    address internal proxyAdmin;
+    ProxyAdmin internal proxyAdmin;
 
     Counter internal counter;
 
@@ -20,8 +20,8 @@ contract Deploy is Script, ScriptHelpers, CounterDeployer {
         string memory input = vm.readFile("script/1.0.0/input.json");
 
         vm.broadcast(deployerPrivateKey);
-        proxyAdmin = address(new ProxyAdmin(input.readAddress($("ProxyAdmin.initialOwner"))));
+        proxyAdmin = new ProxyAdmin(input.readAddress($("ProxyAdmin.initialOwner")));
 
-        (counter,,) = deployCounter(address(proxyAdmin), input.readUint($("Counter.number")));
+        (counter,) = deployCounter(address(proxyAdmin), input.readUint($("Counter.number")));
     }
 }
