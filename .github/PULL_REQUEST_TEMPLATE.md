@@ -15,6 +15,7 @@ Please describe the tests that you ran to verify your changes. Provide instructi
 Before deployment
 
 - [ ] 100% test and branch coverage
+- [ ] check slither for severe issues
 - [ ] fuzz and invariant tests (when applicable)
 - [ ] formal verification (when applicable)
 - [ ] deployment or upgrade scripts ready
