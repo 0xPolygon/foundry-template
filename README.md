@@ -45,4 +45,4 @@ If you want to contribute to this project, please check [CONTRIBUTING.md](CONTRI
 
 ---
 
-Copyright (C) 2023 PT Services DMCC
+Copyright © 2023 PT Services DMCC
