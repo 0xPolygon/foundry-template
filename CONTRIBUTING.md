@@ -3,12 +3,22 @@
 - [Install](#install)
 - [Pre-commit Hooks](#pre-commit-hooks)
 - [Branching](#branching)
-- [Versioning](#versioning)
+  - [Main](#main)
+  - [Staging](#staging)
+  - [Dev](#dev)
+  - [Feature](#feature)
+  - [Fix](#fix)
 - [Code Practices](#code-practices)
+  - [Interfaces](#interfaces)
+  - [NatSpec \& Comments](#natspec--comments)
+- [Versioning](#versioning)
 - [Testing](#testing)
+  - [Deployer Template](#deployer-template)
 - [Deployment](#deployment)
-- [Deployment Info Generation](#deployment-info-generation)
-- [Deployment Template Script](#deployment-template-script)
+  - [Deployer Template](#deployer-template-1)
+  - [Deployment](#deployment-1)
+  - [Deployment Info Generation](#deployment-info-generation)
+- [Deployer Template Script](#deployer-template-script)
 - [Releases](#releases)
 
 ## Install
@@ -72,17 +82,17 @@ Whenever contracts are modified, only the version of the changed contracts shoul
 
 ## Testing
 
-### Deployment Template
+### Deployer Template
 
-This repo provides a deployment script template for consistency between scripts and unit tests. For more information on how to use the template, check [here](#deployment-script-template).
+This repo provides a deployer template for consistency between scripts and unit tests. For more information on how to use the template, check [here](#depler-template-script).
 
 ## Deployment
 
 This repo utilizes versioned deployments. Any changes to a contract should update the version of this specific contract. To deploy a new version of a contract, create a new deployment script in a directory named after the new version of the modified contracts (e.g., `1.0.0`). A script is provided that extracts deployment information from the `run-latest.json` file within the `broadcast` directory generated while the forge script runs. From this information a JSON and markdown file is generated containing various information about the deployment itself as well as past deployments.
 
-### Deployment Template
+### Deployer Template
 
-This repo provides a deployment script template for consistency between scripts and unit tests. For more information on how to use the template, check [here](#deployment-script-template).
+This repo provides a deployer template for consistency between scripts and unit tests. For more information on how to use the template, check [here](#deployer-template-script).
 
 ### Deployment
 
@@ -116,11 +126,17 @@ As the `chainId`, provide the chainId of the network the contracts were deployed
 
 When upgrading a contract, most of the times just the new implementation is deployed and the actual upgrade is triggered by a governance process or a multisig. The script will check whether the implementation of the upgraded contract was updated to the deployed version and if not, it will fail and not generate any files.
 
-## Deployment Template Script
+## Deployer Template Script
 
-This repo provides a deployment script template for consistency between scripts and unit tests.
+This repo provides a deployer template for consistency between scripts and unit tests.
 
-TODO more documentation
+A deployer is an `abstract` contract, meant to be inherited in scripts and tests. The deployer consists of two functions: `deploy<Contract>` and `deploy<Contract>_NoInit`. It handels the creation, proxification, and initialization of the contract.
+
+To generate a new deployer:
+
+```
+node script/util/generateDeployer.js <contractFile> [params] <outputDir>
+```
 
 ## Releases
 
