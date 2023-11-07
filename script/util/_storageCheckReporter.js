@@ -116,7 +116,7 @@ const fs = require("fs");
 const path = require("path");
 
 const filePath = path.parse(process.argv[4]);
-const directoryPath = path.join(".", "storage_check_report", filePath.dir);
+const directoryPath = path.join("script/util/storage_check_report", filePath.dir);
 
 // Create directories recursively
 try {
