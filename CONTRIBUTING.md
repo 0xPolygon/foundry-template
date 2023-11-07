@@ -84,7 +84,7 @@ Whenever contracts are modified, only the version of the changed contracts shoul
 
 ### Deployer Template
 
-This repo provides a deployer template for consistency between scripts and unit tests. For more information on how to use the template, check [here](#depler-template-script).
+This repo provides a deployer template for consistency between scripts and unit tests. For more information on how to use the template, check [here](#deployer-template-script).
 
 ## Deployment
 
