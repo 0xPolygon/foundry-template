@@ -2,7 +2,7 @@ name: test
 
 on:
   pull_request:
-    branches: [master, staging, dev, feat/**, fix/**]
+    branches: [main, master, staging, dev, feat/**, fix/**]
 
 env:
   FOUNDRY_PROFILE: ci
