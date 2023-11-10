@@ -9,6 +9,7 @@
   - [Feature](#feature)
   - [Fix](#fix)
 - [Code Practices](#code-practices)
+  - [Code Style](#code-style)
   - [Interfaces](#interfaces)
   - [NatSpec \& Comments](#natspec--comments)
 - [Versioning](#versioning)
@@ -65,6 +66,47 @@ Any new feature should be developed on a separate branch. The naming convention 
 Any bug fixes should be developed on a separate branch. The naming convention for these branches is `fix/*`. Once the fix is complete, a pull request into the dev branch can be created.
 
 ## Code Practices
+
+### Code Style
+
+The repo follows the official [Solidity Style Guide](https://docs.soliditylang.org/en/latest/style-guide.html). In addition to that, this repo also borrows the following rules from [OpenZeppelin](https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/GUIDELINES.md#solidity-conventions):
+
+- Internal or private state variables or functions should have an underscore prefix.
+
+  ```solidity
+  contract TestContract {
+      uint256 private _privateVar;
+      uint256 internal _internalVar;
+      function _testInternal() internal { ... }
+      function _testPrivate() private { ... }
+  }
+  ```
+
+- Events should generally be emitted immediately after the state change that they
+  represent, and should be named in the past tense. Some exceptions may be made for gas
+  efficiency if the result doesn't affect observable ordering of events.
+
+  ```solidity
+  function _burn(address who, uint256 value) internal {
+      super._burn(who, value);
+      emit TokensBurned(who, value);
+  }
+  ```
+
+- Interface names should have a capital I prefix.
+
+  ```solidity
+  interface IERC777 {
+  ```
+
+- Contracts not intended to be used standalone should be marked abstract
+  so they are required to be inherited to other contracts.
+
+  ```solidity
+  abstract contract AccessControl is ..., {
+  ```
+
+- Unchecked arithmetic blocks should contain comments explaining why overflow is guaranteed not to happen. If the reason is immediately apparent from the line above the unchecked block, the comment may be omitted.
 
 ### Interfaces
 
