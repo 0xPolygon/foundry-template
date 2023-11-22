@@ -172,12 +172,12 @@ When upgrading a contract, most of the times just the new implementation is depl
 
 This repo provides a deployer template for consistency between scripts and unit tests.
 
-A deployer is an `abstract` contract, meant to be inherited in scripts and tests. The deployer consists of two functions: `deploy<Contract>` and `deploy<Contract>_NoInit`. It handels the creation, proxification, and initialization of the contract.
+A deployer is an abstract contract, meant to be inherited in scripts and tests. A deployer provides type-checks and handles the creation, proxification, and initialization of the contract. It consists of two functions: `deploy<Contract>` and `deploy<Contract>_NoInit`.
 
 To generate a new deployer:
 
 ```
-node script/util/generateDeployer.js <contractFile> [params] <outputDir>
+node script/util/generateDeployer.js <contractFile> [init params] <outputDir>
 ```
 
 ## Releases

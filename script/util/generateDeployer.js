@@ -9,11 +9,16 @@ const replaceInFile = (filePath, newFilePath, replacementExample, replacementArg
     }
 
     let regexExample = new RegExp("<Example>", "g");
+    let regexExampleVar = new RegExp("<example>", "g");
     let regexArgs = new RegExp("<uint256 arg>", "g");
     let regexArgsNames = new RegExp("<arg>", "g");
     let regexPathToExample = new RegExp("<src/Example.sol>", "g");
 
     let updatedData = data.replace(regexExample, replacementExample);
+    updatedData = updatedData.replace(
+      regexExampleVar,
+      replacementExample.charAt(0).toLowerCase() + replacementExample.slice(1)
+    );
     updatedData = updatedData.replace(regexArgs, replacementArgs);
     updatedData = updatedData.replace(regexArgsNames, processString(replacementArgs));
     updatedData = updatedData.replace(regexPathToExample, replacementPathToExample);
@@ -82,9 +87,7 @@ if (fileNameParts.length > 1) {
 }
 
 if (!replacementPathToExample || !newFilePath) {
-  console.error(
-    "Usage: node script/util/generateDeployer.js <path/to/Contract.sol> [type arg, ...] <where/to/generate/>",
-  );
+  console.error("Usage: node script/util/generateDeployer.js <contractFile> [init params] <outputDir>");
   process.exit(1);
 }
 

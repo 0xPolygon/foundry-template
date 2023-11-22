@@ -7,10 +7,8 @@ import "test/util/TestHelpers.sol";
 import "script/1.0.0/Deploy.s.sol";
 
 abstract contract BeforeScript is Test, TestHelpers, CounterDeployer {
-    Counter internal counter;
-
-    function setUp() public {
-        (counter,) = deployCounter_NoInit(makeAddr(""));
+    function setUp() public virtual {
+        deployCounter_NoInit(makeAddr(""));
     }
 }
 

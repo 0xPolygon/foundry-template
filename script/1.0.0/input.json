@@ -5,7 +5,7 @@
 
     "31337": {
         "ProxyAdmin": {
-            "initialOwner": "0x48789ECd4317eCc8dBdB1d06EF39F01c5862a941"
+            "initialOwner": "0x356f394005D3316ad54d8f22b40D02Cd539A4a3C"
         },
         "Counter": {
             "number": 10
