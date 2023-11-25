@@ -1,6 +1,8 @@
 const fs = require("fs");
 const path = require("path");
 const { exec } = require("child_process");
+const Util = require("util");
+const asyncExec = Util.promisify(exec);
 
 // ========== ABOUT ==========
 
@@ -22,6 +24,8 @@ const scriptName = process.argv[2]; // Replace with the appropriate index for sc
 const chainId = process.argv[3]; // Replace with the appropriate index for chainId
 
 async function main() {
+  console.log("Extracting...");
+
   // ========== APPEND TO HISTORY ==========
 
   // Used for getVersion() helper
@@ -58,8 +62,7 @@ async function main() {
     }
   }
 
-  //TODO: Uncomment (see function definition).
-  //prepareArtifacts();
+  await prepareArtifacts();
 
   // Filter transactions with "transactionType" as "CREATE"
   const createTransactions = jsonData.transactions.filter((transaction) => transaction.transactionType === "CREATE");
@@ -191,13 +194,10 @@ async function main() {
 
   // Write the updated object back to the record.json file
   fs.writeFileSync(recordFilePath, JSON.stringify(recordData, null, 2), "utf8");
+  console.log(`Extraction complete.`);
 }
 
-console.log("Extracting...");
-
 main();
-
-console.log(`Extraction complete.`);
 
 // ========== HELPERS ==========
 
@@ -281,24 +281,11 @@ function getABI(contractName) {
 }
 
 // Note: Makes sure contract artifacts are up-to-date.
-function prepareArtifacts() {
-  //TODO: Make JS wait for these commands to finish before continuing.
-
+async function prepareArtifacts() {
   console.log(`Preparing artifacts...`);
 
-  exec("forge clean", (error) => {
-    if (error) {
-      console.error(`Failed to forge clean.`);
-      return;
-    }
-  });
-
-  exec("forge build", (error) => {
-    if (error) {
-      console.error(`Failed to forge build.`);
-      return;
-    }
-  });
+  await asyncExec("forge clean");
+  await asyncExec("forge build");
 
   console.log(`Artifacts ready. Continuing...`);
 }
