@@ -7,6 +7,10 @@ import {Initializable} from "@openzeppelin/contracts-upgradeable/proxy/utils/Ini
 contract Counter is ICounter, Initializable {
     uint256 public number;
 
+    constructor() {
+        _disableInitializers();
+    }
+
     function initialize(uint256 initialNumber) public initializer {
         number = initialNumber;
     }
