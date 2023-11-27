@@ -6,22 +6,28 @@ import "test/util/TestHelpers.sol";
 
 import "script/1.0.0/Deploy.s.sol";
 
-abstract contract BeforeScript is Test, TestHelpers, CounterDeployer {
+abstract contract BeforeScript is Test, TestHelpers, Deploy {
     function setUp() public virtual {
-        deployCounter_NoInit(makeAddr(""));
+        _run_AllNew();
     }
 }
 
 contract CounterTest_Zero is BeforeScript {
+    function test_RevertsIf_ImplementationInitialized() public {
+        vm.expectRevert(Initializable.InvalidInitialization.selector);
+        Counter(counterLogic).initialize(1);
+    }
+
     function test_Initializes(uint256 number) public {
-        counter.initialize(number);
+        input[block.chainid].Counter.number = number;
+        _run_AllNew();
         assertEq(counter.number(), number);
     }
 }
 
 abstract contract AfterScript is Test, TestHelpers, Deploy {
     function setUp() public virtual {
-        run();
+        _run_AllNew();
     }
 }
 
