@@ -4,14 +4,17 @@ pragma solidity 0.8.22;
 import "forge-std/Script.sol";
 import "script/util/ScriptHelpers.sol";
 
+import "./Input.sol";
 import "script/deployers/DeployCounter.s.sol";
 
-contract Deploy is Script, ScriptHelpers, CounterDeployer {
+contract Deploy is Script, ScriptHelpers, Input, CounterDeployer {
     using stdJson for string;
 
     function run() public {
-        string memory input = vm.readFile("script/1.0.0/input.json");
+        deployCounter_NoInit(getInput().ProxyAdmin.initialOwner);
+    }
 
-        deployCounter(input.readAddress($("ProxyAdmin.initialOwner")), input.readUint($("Counter.number")));
+    function _run_AllNew() internal {
+        deployCounter(getInput().ProxyAdmin.initialOwner, getInput().Counter.number);
     }
 }
