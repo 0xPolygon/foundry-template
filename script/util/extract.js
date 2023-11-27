@@ -417,38 +417,37 @@ Deployed contracts:
 
 - ${contractInfos
         .map(
-          ({ contract, contractName }) =>
-            `[${contractName.replace(/([A-Z])/g, " $1").trim()}](${
-              getEtherscanLink(chainId, contract.address) || contract.address
-            })${
-              contract.proxyType
-                ? ` ([Implementation](${
-                    getEtherscanLink(chainId, contract.implementation) || contract.implementation
-                  }))`
-                : ``
-            }`,
-        )
-        .join("\n- ")}
-
-<details>
-<summary>Inputs</summary>
-<table>
+          ({ contract, contractName }) => `
+    <details>
+    <summary><a href="${getEtherscanLink(chainId, contract.address) || contract.address}">${contractName
+            .replace(/([A-Z])/g, " $1")
+            .trim()}</a>${
+            contract.proxyType
+              ? ` (<a href="${
+                  getEtherscanLink(chainId, contract.implementation) || contract.implementation
+                }">Implementation</a>)`
+              : ``
+          }</summary>
+    <table>
+        <tr>
+            <th>Parameter</th>
+            <th>Value</th>
+        </tr>
+        ${Object.entries(contract.input)
+          .map(
+            ([key, value]) => `
     <tr>
-        <th>Parameter</th>
-        <th>Value</th>
-    </tr>
-    ${Object.entries(contractInfos[0].input)
-      .map(
-        ([key, value]) => `
-<tr>
-    <td>${key}</td>
-    <td>${value}</td>
-</tr>`,
-      )
-      .join("\n")}
-</table>
-</details>
-    `,
+        <td>${key}</td>
+        <td>${value}</td>
+    </tr>`,
+          )
+          .join("\n")}
+    </table>
+    </details>
+            `,
+        )
+        .join("\n- ")}    
+`,
     )
     .join("\n\n");
 
