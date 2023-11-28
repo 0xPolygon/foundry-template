@@ -1,11 +1,15 @@
+const { execSync } = require("child_process");
 const { readFileSync, existsSync, writeFileSync } = require("fs");
 const { join } = require("path");
 
+const projectGitUrl = getProjectUrl();
+const projectName = getProjectName();
+
 function generateAndSaveMarkdown(input) {
   console.log("Generating markdown...");
-  let out = `# Polygon Foundry Template\n\n`;
+  let out = `# ${projectName}\n\n`;
 
-  out += `\n### Table of Contents\n- [Summary](#summary)\n- [Contracts](#contracts)\n\t- `;
+  out += `\n### Table of Contents\n- [Summary](#summary)\n- [Contracts](#contracts)\n- `;
   out += Object.keys(input.latest)
     .map(
       (c) =>
@@ -23,20 +27,20 @@ function generateAndSaveMarkdown(input) {
     .join("");
 
   out += `\n\n## Summary
-    <table>
-    <tr>
-        <th>Contract</th>
-        <th>Address</th>
-        <th>Version</th>
-    </tr>`;
+<table>
+<tr>
+    <th>Contract</th>
+    <th>Address</th>
+    <th>Version</th>
+</tr>`;
   out += Object.entries(input.latest)
     .map(
       ([contractName, { address, version }]) =>
         `<tr>
-        <td>${contractName}</td>
-        <td>${getEtherscanLinkAnchor(input.chainId, address)}</td>
-        <td>${version || `N/A`}</td>
-        </tr>`,
+    <td>${contractName}</td>
+    <td>${getEtherscanLinkAnchor(input.chainId, address)}</td>
+    <td>${version || `N/A`}</td>
+    </tr>`,
     )
     .join("\n");
   out += `</table>\n`;
@@ -54,13 +58,9 @@ function generateAndSaveMarkdown(input) {
   
   Deployment Txn: ${getEtherscanLinkMd(input.chainId, deploymentTxn, "tx")}
   
-  ${
-    typeof version === "undefined"
-      ? ""
-      : `Version: [${version}](https://github.com/0xPolygon/pol-token/releases/tag/${version})`
-  }
+  ${typeof version === "undefined" ? "" : `Version: [${version}](${projectGitUrl}/releases/tag/${version})`}
   
-  Commit Hash: [${commitHash.slice(0, 7)}](https://github.com/0xPolygon/pol-token/commit/${commitHash})
+  Commit Hash: [${commitHash.slice(0, 7)}](${projectGitUrl}/commit/${commitHash})
   
   ${prettifyTimestamp(timestamp)}
   ${generateProxyInformationIfProxy({
@@ -148,12 +148,9 @@ function generateProxyInformationIfProxy({
             commitHash,
           }) => `
       <tr>
-          <td><a href="https://github.com/0xPolygon/pol-token/releases/tag/${version}" target="_blank">${version}</a></td>
+          <td><a href="${projectGitUrl}/releases/tag/${version}" target="_blank">${version}</a></td>
           <td>${getEtherscanLinkAnchor(chainId, implementation)}</td>
-          <td><a href="https://github.com/0xPolygon/pol-token/commit/${commitHash}" target="_blank">${commitHash.slice(
-            0,
-            7,
-          )}</a></td>
+          <td><a href="${projectGitUrl}/commit/${commitHash}" target="_blank">${commitHash.slice(0, 7)}</a></td>
       </tr>`,
         )
         .join("")}
@@ -191,11 +188,11 @@ function generateDeploymentHistory(history, latest, chainId) {
   out += Object.entries(allVersions)
     .map(
       ([version, contractInfos]) => `
-  ### [${version}](https://github.com/0xPolygon/pol-token/releases/tag/${version})
+  ### [${version}](${projectGitUrl}/releases/tag/${version})
   
   ${prettifyTimestamp(contractInfos[0].contract.timestamp)}
   
-  Commit Hash: [${contractInfos[0].contract.commitHash.slice(0, 7)}](https://github.com/0xPolygon/pol-token/commit/${
+  Commit Hash: [${contractInfos[0].contract.commitHash.slice(0, 7)}](${projectGitUrl}/commit/${
         contractInfos[0].contract.commitHash
       })
   
@@ -261,7 +258,19 @@ function prettifyTimestamp(timestamp) {
 function isTransaction(str) {
   return /^0x([A-Fa-f0-9]{64})$/.test(str);
 }
+
 function isAddress(str) {
   return /^0x([A-Fa-f0-9]{40})$/.test(str);
 }
+
+function getProjectUrl() {
+  return execSync(`git remote get-url origin`, { encoding: "utf-8" })
+    .trim()
+    .replace(/\.git$/, "");
+}
+
+function getProjectName() {
+  return execSync(`git remote get-url origin | cut -d '/' -f 5 | cut -d '.' -f 1`, { encoding: "utf-8" }).trim();
+}
+
 module.exports = { generateAndSaveMarkdown };
