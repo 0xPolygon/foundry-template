@@ -7,6 +7,10 @@ import "src/Counter.sol";
 import {ProxyAdmin} from "@openzeppelin/contracts/proxy/transparent/ProxyAdmin.sol";
 import {TransparentUpgradeableProxy, ITransparentUpgradeableProxy} from "@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol";
 
+struct CounterInput {
+    uint256 number;
+}
+
 abstract contract CounterDeployer is Script {
     Counter internal counter;
     ProxyAdmin internal counterProxyAdmin;
