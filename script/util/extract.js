@@ -1,231 +1,24 @@
-const { readFileSync, existsSync, writeFileSync, mkdirSync } = require("fs");
-const { execSync } = require("child_process");
+const { readFileSync, existsSync, writeFileSync } = require("fs");
 const { join } = require("path");
+const { extractAndSaveJson } = require("./extractor.js");
 
 /**
  * @description Extracts contract deployment data from run-latest.json (foundry broadcast output) and writes to deployments/{chainId}.json
- * @usage node script/utils/extract.js {chainId} [version = "1.0.0"] [scriptName = "Deploy.s.sol"]
+ * @usage node script/utils/extract.js {chainId} [scriptName = "Deploy.s.sol"]
  * @dev
  *  currently only supports TransparentUpgradeableProxy pattern
  */
 async function main() {
   validateInputs();
-  let [chainId, version, scriptName] = process.argv.slice(2);
-  if (!version?.length) version = "1.0.0";
+  let [chainId, scriptName] = process.argv.slice(2);
   if (!scriptName?.length) scriptName = "Deploy.s.sol";
-  const commitHash = getCommitHash();
-  const data = JSON.parse(
-    readFileSync(join(__dirname, `../../broadcast/${scriptName}/${chainId}/run-latest.json`), "utf-8"),
-  );
-  const config = JSON.parse(readFileSync(join(__dirname, "../config.json"), "utf-8"));
-  const input = JSON.parse(readFileSync(join(__dirname, `../${version}/input.json`), "utf-8"));
-  const rpcUrl = config.defaultRpc[chainId] || process.env.RPC_URL || "http://127.0.0.1:8545";
-  const deployments = data.transactions.filter(({ transactionType }) => transactionType === "CREATE");
-
-  const outPath = join(__dirname, `../../deployments/json/${chainId}.json`);
-  if (!existsSync(join(__dirname, "../../deployments/"))) mkdirSync(join(__dirname, "../../deployments/"));
-  if (!existsSync(join(__dirname, "../../deployments/json/"))) mkdirSync(join(__dirname, "../../deployments/json/"));
-  const out = JSON.parse(
-    (existsSync(outPath) && readFileSync(outPath, "utf-8")) || JSON.stringify({ chainId, latest: {}, history: [] }),
-  );
-
-  const timestamp = data.timestamp;
-  let latestContracts = {};
-  if (Object.keys(out.latest).length === 0) {
-    const deployedContractsMap = new Map(
-      [...deployments].map(({ contractAddress, contractName }) => [contractAddress, contractName]),
-    );
-
-    // first deployment
-    // todo(future): add support for other proxy patterns
-    const proxies = await Promise.all(
-      deployments
-        .filter(({ contractName }) => contractName === "TransparentUpgradeableProxy")
-        .map(async ({ arguments, contractAddress, hash }) => ({
-          implementation: arguments[0],
-          proxyAdmin: arguments[1],
-          address: contractAddress,
-          contractName: deployedContractsMap.get(arguments[0]),
-          proxy: true,
-          ...(await getVersion(contractAddress, rpcUrl)),
-          proxyType: "TransparentUpgradeableProxy",
-          timestamp,
-          deploymentTxn: hash,
-          commitHash,
-        })),
-    );
-    const nonProxies = await Promise.all(
-      deployments
-        .filter(
-          ({ contractName }) =>
-            contractName !== "TransparentUpgradeableProxy" && !proxies.find((p) => p.contractName === contractName),
-        )
-        .map(async ({ contractName, contractAddress, hash }) => ({
-          address: contractAddress,
-          contractName,
-          proxy: false,
-          ...(await getVersion(contractAddress, rpcUrl)),
-          timestamp,
-          deploymentTxn: hash,
-          commitHash,
-        })),
-    );
-    const contracts = [...proxies, ...nonProxies].reduce((obj, { contractName, ...rest }) => {
-      obj[contractName] = rest;
-      return obj;
-    }, {});
-    latestContracts = contracts;
-    out.history.push({
-      contracts: Object.entries(contracts).reduce((obj, [key, { timestamp, commitHash, ...rest }]) => {
-        obj[key] = rest;
-        return obj;
-      }, {}),
-      input: input[chainId],
-      timestamp,
-      commitHash,
-    });
-  } else {
-    if (out.history.find((h) => h.commitHash === commitHash)) return console.log("warn: commitHash already deployed"); // if commitHash already exists in history, return
-
-    for (const { contractName, contractAddress } of deployments) {
-      if (Object.keys(out.latest).includes(contractName) && out.latest[contractName].proxy) {
-        // new deployment, check if implementation changed on chain
-        if (out.latest[contractName].proxyType !== "TransparentUpgradeableProxy") continue; // only support TransparentUpgradeableProxy pattern
-        const currentImplementation = getImplementationAddress(
-          out.latest[contractName].address,
-          "0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc",
-          rpcUrl,
-        );
-        if (currentImplementation === out.latest[contractName].implementation)
-          throw new Error(
-            `Implementation for ${contractName}(${out.latest[contractName].address}) did not change - ${currentImplementation}, deployed - ${contractAddress}`,
-          );
-        if (currentImplementation !== contractAddress)
-          throw new Error(
-            `Implementation mismatch for ${contractName}(${out.latest[contractName].address}), onchain - ${currentImplementation}, deployed - ${contractAddress}`,
-          );
-
-        // currentImplementation === contractAddress
-        // implementation changed, update latestContracts
-        latestContracts[contractName] = {
-          ...out.latest[contractName],
-          implementation: toChecksumAddress(currentImplementation),
-          version: (await getVersion(currentImplementation, rpcUrl))?.version || version,
-          timestamp,
-          commitHash,
-        };
-        out.history.unshift({
-          contracts: Object.entries(latestContracts).reduce((obj, [key, { timestamp, commitHash, ...rest }]) => {
-            obj[key] = rest;
-            return obj;
-          }, {}),
-          input: input[chainId],
-          timestamp,
-          commitHash,
-        });
-      }
-    }
-
-    const deployedContractsMap = new Map(
-      Object.entries(out.latest).map(([contractName, { address }]) => [address.toLowerCase(), contractName]),
-    );
-
-    for (const { transaction, transactionType } of data.transactions) {
-      if (
-        transactionType === "CALL" &&
-        deployedContractsMap.get(transaction.to.toLowerCase()) === "ProxyAdmin" &&
-        transaction.data.startsWith("0x99a88ec4") // upgrade(address, address)
-      ) {
-        const proxyAddress = "0x" + transaction.data.slice(34, 74);
-        const newImplementationAddress = "0x" + transaction.data.slice(98, 138);
-        const contractName = deployedContractsMap.get(proxyAddress.toLowerCase());
-
-        latestContracts[contractName] = {
-          ...out.latest[contractName],
-          implementation: toChecksumAddress(newImplementationAddress),
-          version: (await getVersion(newImplementationAddress, rpcUrl))?.version || version,
-          timestamp,
-          commitHash,
-        };
-        out.history.unshift({
-          contracts: Object.entries(latestContracts).reduce((obj, [key, { timestamp, commitHash, ...rest }]) => {
-            obj[key] = rest;
-            return obj;
-          }, {}),
-          input: input[chainId],
-          timestamp,
-          commitHash,
-        });
-      }
-    }
-  }
-
-  // overwrite latest with changed contracts
-  out.latest = {
-    ...out.latest,
-    ...latestContracts,
-  };
-
-  writeFileSync(outPath, JSON.stringify(out, null, 2));
-  generateMarkdown(out);
+  validateInputs();
+  generateAndSaveMarkdown(await extractAndSaveJson(scriptName, chainId));
 }
 
-function getCommitHash() {
-  return execSync("git rev-parse HEAD").toString().trim(); // note: update if not using git
-}
-
-function toChecksumAddress(address) {
-  try {
-    return execSync(`cast to-check-sum-address ${address}`).toString().trim(); // note: update if not using cast
-  } catch (e) {
-    console.log("ERROR", e);
-    return address;
-  }
-}
-
-function getImplementationAddress(proxyAddress, implementationSlot, rpcUrl) {
-  try {
-    const implementationAddress = execSync(`cast storage ${proxyAddress} ${implementationSlot} --rpc-url ${rpcUrl}`)
-      .toString()
-      .trim(); // note: update if not using cast
-    if (implementationAddress === "0x0000000000000000000000000000000000000000000000000000000000000000")
-      throw new Error(`empty implementation address for ${proxyAddress} at slot ${implementationSlot}`);
-    const trimmedAddress = "0x" + implementationAddress.substring(66 - 40, 66);
-    return toChecksumAddress(trimmedAddress);
-  } catch (e) {
-    console.log("ERROR", e);
-    return "0x0000000000000000000000000000000000000000";
-  }
-}
-
-async function getVersion(contractAddress, rpcUrl) {
-  try {
-    const res = await (
-      await fetch(rpcUrl, {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-          jsonrpc: "2.0",
-          id: Date.now(),
-          method: "eth_call",
-          params: [{ to: contractAddress, data: "0x54fd4d50" }, "latest"], // version()(string)
-        }),
-      })
-    ).json();
-    if (res.error) throw new Error(res.error.message);
-    return { version: hexToAscii(res.result)?.trim() || res.result };
-  } catch (e) {
-    if (e.message === "execution reverted") return { version: undefined }; // contract does not implement getVersion()
-    if (e.message.includes("fetch is not defined")) {
-      console.warn("use node 18+");
-    }
-    throw e;
-  }
-}
-
-function generateMarkdown(input) {
-  let out = `# Polygon Ecosystem Token\n\n`;
-  // read name from foundry.toml
+function generateAndSaveMarkdown(input) {
+  console.log("Generating markdown...");
+  let out = `# Polygon Foundry Template\n\n`;
 
   out += `\n### Table of Contents\n- [Summary](#summary)\n- [Contracts](#contracts)\n\t- `;
   out += Object.keys(input.latest)
@@ -256,7 +49,7 @@ function generateMarkdown(input) {
       ([contractName, { address, version }]) =>
         `<tr>
       <td>${contractName}</td>
-      <td><a href="${getEtherscanLink(input.chainId, address)}" target="_blank">${address}</a></td>
+      <td>${getEtherscanLinkAnchor(input.chainId, address)}</td>
       <td>${version || `N/A`}</td>
       </tr>`,
     )
@@ -307,6 +100,7 @@ ${generateProxyInformationIfProxy({
 ${deploymentHistoryMd}`;
 
   writeFileSync(join(__dirname, `../../deployments/${input.chainId}.md`), out, "utf-8");
+  console.log("Generation complete!");
 }
 
 function getEtherscanLink(chainId, address, slug = "address") {
@@ -316,14 +110,21 @@ function getEtherscanLink(chainId, address, slug = "address") {
       return `https://etherscan.io/${slug}/${address}`;
     case 5:
       return `https://goerli.etherscan.io/${slug}/${address}`;
-    default:
+    case 11155111:
+      return `https://sepolia.etherscan.io/${slug}/${address}`;
+    case 31337:
       return ``;
-    // return `https://blockscan.com/${slug}/${address}`;
+    default:
+      return `https://blockscan.com/${slug}/${address}`;
   }
 }
 function getEtherscanLinkMd(chainId, address, slug = "address") {
   const etherscanLink = getEtherscanLink(chainId, address, slug);
   return etherscanLink.length ? `[${address}](${etherscanLink})` : address;
+}
+function getEtherscanLinkAnchor(chainId, address, slug = "address") {
+  const etherscanLink = getEtherscanLink(chainId, address, slug);
+  return etherscanLink.length ? `<a href="${etherscanLink}" target="_blank">${address}</a>` : address;
 }
 
 function generateProxyInformationIfProxy({
@@ -363,7 +164,7 @@ function generateProxyInformationIfProxy({
         }) => `
     <tr>
         <td><a href="https://github.com/0xPolygon/pol-token/releases/tag/${version}" target="_blank">${version}</a></td>
-        <td><a href="${getEtherscanLink(chainId, implementation)}" target="_blank">${implementation}</a></td>
+        <td>${getEtherscanLinkAnchor(chainId, implementation)}</td>
         <td><a href="https://github.com/0xPolygon/pol-token/commit/${commitHash}" target="_blank">${commitHash.slice(
           0,
           7,
@@ -427,22 +228,40 @@ Deployed contracts:
                   getEtherscanLink(chainId, contract.implementation) || contract.implementation
                 }">Implementation</a>)`
               : ``
+          }${
+            isTransaction(contract.input.initializationTxn)
+              ? ` (<a href="${getEtherscanLink(
+                  chainId,
+                  contract.input.initializationTxn,
+                  "tx",
+                )}">Initialization Txn</a>)`
+              : ``
           }</summary>
+    ${
+      Object.keys(contract.input.constructor).length
+        ? `
     <table>
         <tr>
             <th>Parameter</th>
             <th>Value</th>
         </tr>
-        ${Object.entries(contract.input)
+        ${Object.entries(contract.input.constructor)
           .map(
             ([key, value]) => `
     <tr>
         <td>${key}</td>
-        <td>${value}</td>
+        <td>${
+          isAddress(value) || isTransaction(value)
+            ? getEtherscanLinkAnchor(chainId, value, isTransaction(value) ? "tx" : "address")
+            : value
+        }</td>
     </tr>`,
           )
           .join("\n")}
     </table>
+`
+        : ``
+    }
     </details>
             `,
         )
@@ -458,38 +277,19 @@ function prettifyTimestamp(timestamp) {
   return new Date(timestamp * 1000).toUTCString().replace("GMT", "UTC");
 }
 
-const hexToAscii = (str) => hexToUtf8(str).replace(/[\u0000-\u0008,\u000A-\u001F,\u007F-\u00A0]+/g, ""); // remove non-ascii chars
-const hexToUtf8 = (str) => new TextDecoder().decode(hexToUint8Array(str)); // note: TextDecoder present in node, update if not using nodejs
-function hexToUint8Array(hex) {
-  const value = hex.toLowerCase().startsWith("0x") ? hex.slice(2) : hex;
-  return new Uint8Array(Math.ceil(value.length / 2)).map((_, i) => parseInt(value.substring(i * 2, i * 2 + 2), 16));
+function isTransaction(str) {
+  return /^0x([A-Fa-f0-9]{64})$/.test(str);
+}
+function isAddress(str) {
+  return /^0x([A-Fa-f0-9]{40})$/.test(str);
 }
 
 function validateInputs() {
-  let [chainId, version, scriptName] = process.argv.slice(2);
+  let [chainId, scriptName] = process.argv.slice(2);
   let printUsageAndExit = false;
-  if (
-    !(
-      typeof chainId === "string" &&
-      ["string", "undefined"].includes(typeof version) &&
-      ["string", "undefined"].includes(typeof scriptName)
-    ) ||
-    chainId === "help"
-  ) {
+  if (!(typeof chainId === "string" && ["string", "undefined"].includes(typeof scriptName)) || chainId === "help") {
     if (chainId !== "help")
       console.log(`error: invalid inputs: ${JSON.stringify({ chainId, version, scriptName }, null, 0)}\n`);
-    printUsageAndExit = true;
-  }
-  if (
-    version &&
-    !(
-      existsSync(join(__dirname, `../${version}/input.json`)) &&
-      existsSync(join(__dirname, `../${version}/${scriptName}`))
-    )
-  ) {
-    console.log(
-      `error: script/${version}/input.json or script/${version}/${scriptName || "<scriptName>"} does not exist\n`,
-    );
     printUsageAndExit = true;
   }
   if (printUsageAndExit) {
