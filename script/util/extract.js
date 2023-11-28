@@ -4,7 +4,7 @@ const { extractAndSaveJson } = require("./extractor.js");
 const { generateAndSaveMarkdown } = require("./generateMarkdown.js");
 /**
  * @description Extracts contract deployment data from run-latest.json (foundry broadcast output) and writes to deployments/{chainId}.json
- * @usage node script/utils/extract.js {chainId} [scriptName = "Deploy.s.sol"]
+ * @usage node script/util/extract.js {chainId} [scriptName = "Deploy.s.sol"] [--skip-json | -s]
  * @dev
  *  currently only supports TransparentUpgradeableProxy pattern
  */

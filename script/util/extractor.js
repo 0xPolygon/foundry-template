@@ -189,7 +189,6 @@ async function extractAndSaveJson(scriptName, chainId) {
       }
     } else {
       // ===== TYPE: PROXY =====
-
       // Check if proxy has been processed
       for (const contractName in recordData.latest) {
         if (recordData.latest.hasOwnProperty(contractName)) {
@@ -199,7 +198,7 @@ async function extractAndSaveJson(scriptName, chainId) {
             break;
           } else {
             // CASE: Unexpected proxy
-            console.error(`Unexpected proxy encountered. Aborted.`);
+            console.error(`Unexpected proxy ${currentTransaction.contractAddress}. Aborted.`);
             process.exit(1);
           }
         }
