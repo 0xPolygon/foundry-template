@@ -13,7 +13,7 @@ Note: Only TransparentUpgradeableProxy by OpenZeppelin is supported at the momen
 
 */
 
-async function main(scriptName, chainId) {
+async function extractAndSaveJson(scriptName, chainId) {
   console.log("Extracting...");
 
   // ========== PREPARE FILES ==========
@@ -211,7 +211,7 @@ async function main(scriptName, chainId) {
 
   recordData.history.push({ contracts, timestamp: jsonData.timestamp, commitHash: jsonData.commit });
 
-  /* ========== SAVE CHANGES ==========
+  // ========== SAVE CHANGES ==========
 
   // Create file if it doesn't exist
   const directoryPath = path.dirname(recordFilePath);
@@ -221,14 +221,11 @@ async function main(scriptName, chainId) {
 
   // Write to file
   fs.writeFileSync(recordFilePath, JSON.stringify(recordData, null, 2), "utf8");
-  */
 
   console.log(`Extraction complete!`);
 
   return recordData;
 }
-
-main();
 
 // ========== HELPERS ==========
 
@@ -300,3 +297,5 @@ function prepareArtifacts() {
 
   console.log(`Artifacts ready. Continuing.`);
 }
+
+module.exports = { extractAndSaveJson };
