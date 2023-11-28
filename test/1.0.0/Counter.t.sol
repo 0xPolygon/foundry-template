@@ -8,7 +8,7 @@ import "script/1.0.0/Deploy.s.sol";
 
 abstract contract BeforeScript is Test, TestHelpers, Deploy {
     function setUp() public virtual {
-        _run_AllNew();
+        deployCounter_NoInit(makeAddr(""));
     }
 }
 
@@ -19,8 +19,7 @@ contract CounterTest_Zero is BeforeScript {
     }
 
     function test_Initializes(uint256 number) public {
-        input[block.chainid].Counter.number = number;
-        _run_AllNew();
+        counter.initialize(number);
         assertEq(counter.number(), number);
     }
 }
