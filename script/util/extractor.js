@@ -232,34 +232,15 @@ async function extractAndSaveJson(scriptName, chainId) {
 // IN: contract address and RPC URL
 // OUT: contract version (.version)
 async function getVersion(contractAddress, rpcUrl) {
-  const hexToAscii = (str) => hexToUtf8(str).replace(/[\u0000-\u0008,\u000A-\u001F,\u007F-\u00A0]+/g, ""); // remove non-ascii chars
-  const hexToUtf8 = (str) => new TextDecoder().decode(hexToUint8Array(str)); // note: TextDecoder present in node, update if not using nodejs
-  function hexToUint8Array(hex) {
-    const value = hex.toLowerCase().startsWith("0x") ? hex.slice(2) : hex;
-    return new Uint8Array(Math.ceil(value.length / 2)).map((_, i) => parseInt(value.substring(i * 2, i * 2 + 2), 16));
-  }
-
   try {
-    const res = await (
-      await fetch(rpcUrl, {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-          jsonrpc: "2.0",
-          id: Date.now(),
-          method: "eth_call",
-          params: [{ to: contractAddress, data: "0x54fd4d50" }, "latest"], // version()(string)
-        }),
-      })
-    ).json();
-    if (res.error) throw new Error(res.error.message);
-    return { version: hexToAscii(res.result)?.trim() || res.result };
+    return {
+      version: execSync(`cast call ${contractAddress} 'version()(string)' --rpc-url ${rpcUrl}`, {
+        encoding: "utf-8",
+      }).trim(),
+    }; // note: update if not using cast
   } catch (e) {
-    if (e.message === "execution reverted") return { version: undefined }; // contract does not implement getVersion()
-    if (e.message.includes("fetch is not defined")) {
-      console.warn("use node 18+");
-    }
-    throw e;
+    if (!e.message.includes("execution reverted")) console.log("ERROR", e); // contract does not implement version(), log otherwise
+    return { version: undefined };
   }
 }
 
