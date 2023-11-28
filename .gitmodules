@@ -13,3 +13,6 @@
 [submodule "lib/deployment-log-generator"]
 	path = lib/deployment-log-generator
 	url = https://github.com/0xPolygon/deployment-log-generator
+[submodule "lib/storage-layout-checker"]
+	path = lib/storage-layout-checker
+	url = https://github.com/0xPolygon/storage-layout-checker
