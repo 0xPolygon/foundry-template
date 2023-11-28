@@ -10,3 +10,6 @@
 [submodule "lib/solady"]
 	path = lib/solady
 	url = https://github.com/vectorized/solady
+[submodule "lib/deployment-log-generator"]
+	path = lib/deployment-log-generator
+	url = https://github.com/0xPolygon/deployment-log-generator
