@@ -1,5 +1,5 @@
 # Counter
-[Git Source](https://github.com/0xPolygon/foundry-template/blob/55b07186cd4779cbe55cc2f262f992aeabaf34ad/src/Counter.sol)
+[Git Source](https://github.com/0xPolygon/foundry-template/blob/2d36094275815fea3c3ae2cc197990829bb33d39/src/Counter.sol)
 
 **Inherits:**
 [ICounter](/docs/autogen/src/src/interface/ICounter.sol/interface.ICounter.md), Initializable
@@ -14,6 +14,13 @@ uint256 public number;
 
 
 ## Functions
+### constructor
+
+
+```solidity
+constructor();
+```
+
 ### initialize
 
 

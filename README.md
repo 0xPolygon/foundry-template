@@ -7,10 +7,24 @@ TODO: summary of the features of the template repo
 
 #### Table of Contents
 
+- [Features](#features)
 - [Setup](#setup)
 - [Deployment](#deployment)
 - [Docs](#docs)
 - [Contributing](#contributing)
+
+## Features
+
+- **auto-generated docs** with `./doc.gen.sh`
+- **storage check** when upgrading contracts
+- **pre-commit** hooks (need to be installed once. Config in `.pre-commit-config.yaml`)
+- **report generation** with `extract.js` (uses broadcast file to generate full report of deployments)
+- **Forced code-review** (`CODEOWNERS`)
+- **PR template** (`PULL_REQUEST_TEMPLATE.md`)
+- auto-generate deploy helpers (generateDeployer.js)
+- Solidity file specifying inputs for deploy scripts (Input.sol)
+- _solady_ for gas-sensitive use cases
+- IVersioned interface
 
 ## Setup
 
