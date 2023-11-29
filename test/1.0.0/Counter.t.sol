@@ -21,7 +21,7 @@ contract CounterTest_Zero is BeforeScript {
 
 abstract contract AfterScript is Test, TestHelpers, Deploy {
     function setUp() public virtual {
-        _run_AllNew();
+        _run_All();
     }
 }
 

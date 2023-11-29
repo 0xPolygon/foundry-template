@@ -11,10 +11,10 @@ contract Deploy is Script, ScriptHelpers, Inputs, CounterDeployer {
     using stdJson for string;
 
     function run() public {
-        deployCounter_NoInit(input.proxyAdminOwner);
+        deployCounter_NoInit(input.proxyAdmin.initialOwner);
     }
 
-    function _run_AllNew() internal {
-        deployCounter(input.proxyAdminOwner, input.Counter.number);
+    function _run_All() internal {
+        deployCounter(input.proxyAdmin.initialOwner, input.counter);
     }
 }

@@ -16,8 +16,8 @@ abstract contract CounterDeployer is Script {
     ProxyAdmin internal counterProxyAdmin;
     address internal counterLogic;
 
-    function deployCounter(address proxyAdminOwner, uint256 number) internal {
-        bytes memory initData = abi.encodeCall(Counter.initialize, (number));
+    function deployCounter(address proxyAdminOwner, CounterInput memory input) internal {
+        bytes memory initData = abi.encodeCall(Counter.initialize, (input.number));
 
         _deployCounter(proxyAdminOwner, initData);
     }
