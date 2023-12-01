@@ -1,8 +1,8 @@
 # ICounter
-[Git Source](https://github.com/0xPolygon/foundry-template/blob/55b07186cd4779cbe55cc2f262f992aeabaf34ad/src/interface/ICounter.sol)
+[Git Source](https://github.com/0xPolygon/foundry-template/blob/e3be09e288733981d374eff2b25e6c283a17801f/src/interface/ICounter.sol)
 
 **Inherits:**
-[IVersioned](/docs/autogen/src/src/interface/IVersioned.sol/interface.IVersioned.md)
+[IVersioned](/src/interface/IVersioned.sol/interface.IVersioned.md)
 
 
 ## Functions
