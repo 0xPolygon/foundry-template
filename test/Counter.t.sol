@@ -4,24 +4,30 @@ pragma solidity 0.8.22;
 import "forge-std/Test.sol";
 import "test/util/TestHelpers.sol";
 
-import "script/1.0.0/Deploy.s.sol";
+import "script/deployers/CounterDeployer.s.sol";
 
 abstract contract BeforeScript is Test, TestHelpers, CounterDeployer {
     function setUp() public virtual {
-        deployCounter_NoInit(makeAddr(""));
+        counter = Counter(deployCounterImplementation());
     }
 }
 
 contract CounterTest_Zero is BeforeScript {
-    function test_Initializes(uint256 number) public {
+    function test_InitialState() public {
+        assertEq(counter.number(), 0);
+    }
+
+    function test_RevertsOnInitialization(uint256 number) public {
+        vm.expectRevert(Initializable.InvalidInitialization.selector);
         counter.initialize(number);
-        assertEq(counter.number(), number);
     }
 }
 
-abstract contract AfterScript is Test, TestHelpers, Deploy {
+abstract contract AfterScript is Test, TestHelpers, CounterDeployer {
     function setUp() public virtual {
-        _run_All();
+        address proxyAdmin = makeAddr("alice");
+        uint256 initialNumber = 10;
+        deployCounterTransparent(proxyAdmin, initialNumber);
     }
 }
 
