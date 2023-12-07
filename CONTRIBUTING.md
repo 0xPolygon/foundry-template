@@ -118,7 +118,7 @@ Interfaces should be the entrypoint for all contracts. When exploring the a cont
 
 ## Versioning
 
-This repo utilizes [semantic versioning](https://semver.org/) for smart contracts. An `IVersioned` interface is included in the [interfaces directory](src/interface/IVersioned.sol) exposing a unified versioning interface for all contracts. This version MUST be included in all contracts, whether they are upgradeable or not, to be able to easily match deployed versions. For example, in the case of a non-upgradeable contract one version could be deployed to a network and later a new version might be deployed to another network. The exposed `version()` function is also used by the [Deployment Log Generator](lib/deployment-log-generator/README.md) to extract information about the version.
+This repo utilizes [semantic versioning](https://semver.org/) for smart contracts. An `IVersioned` interface is included in the [interfaces directory](src/interface/IVersioned.sol) exposing a unified versioning interface for all contracts. This version MUST be included in all contracts, whether they are upgradeable or not, to be able to easily match deployed versions. For example, in the case of a non-upgradeable contract one version could be deployed to a network and later a new version might be deployed to another network. The exposed `version()` function is also used by the [Deployment Log Generator](https://github.com/0xPolygon/deployment-log-generator#readme) to extract information about the version.
 
 Whenever contracts are modified, only the version of the changed contracts should be updated. Unmodified contracts should remain on the version of their last change.
 
@@ -126,7 +126,7 @@ Whenever contracts are modified, only the version of the changed contracts shoul
 
 ### Deployer Template
 
-This repo provides a deployer template library for consistency between scripts and unit tests. For more information on how to use the template, check [here](lib/contract-deployer-template/README.md).
+This repo provides a deployer template library for consistency between scripts and unit tests. For more information on how to use the template, check [here](https://github.com/0xPolygon/contract-deployer-template#readme).
 
 ## Deployment
 
@@ -134,7 +134,7 @@ This repo utilizes versioned deployments. Any changes to a contract should updat
 
 ### Deployer Template
 
-This repo provides a deployer template library for consistency between scripts and unit tests. For more information on how to use the template, check [here](lib/contract-deployer-template/README.md).
+This repo provides a deployer template library for consistency between scripts and unit tests. For more information on how to use the template, check [here](https://github.com/0xPolygon/contract-deployer-template#readme).
 
 ### Deployment
 
