@@ -3,28 +3,17 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![CI Status](../../actions/workflows/test.yaml/badge.svg)](../../actions)
 
-TODO: summary of the features of the template repo
+This template repo is a quick and easy way to get started with a new Solidity project. It comes with a number of features that are useful for developing and deploying smart contracts. Such as:
+
+- Pre-commit hooks for formatting, auto generated documentation, and more
+- Various libraries with useful contracts (OpenZeppelin, Solady) and libraries (Deployment log generation, storage checks, deployer templates)
 
 #### Table of Contents
 
-- [Features](#features)
 - [Setup](#setup)
 - [Deployment](#deployment)
 - [Docs](#docs)
 - [Contributing](#contributing)
-
-## Features
-
-- **auto-generated docs** with `./doc.gen.sh`
-- **storage check** when upgrading contracts
-- **pre-commit** hooks (need to be installed once. Config in `.pre-commit-config.yaml`)
-- **report generation** with `extract.js` (uses broadcast file to generate full report of deployments)
-- **Forced code-review** (`CODEOWNERS`)
-- **PR template** (`PULL_REQUEST_TEMPLATE.md`)
-- auto-generate deploy helpers (generateDeployer.js)
-- Solidity file specifying inputs for deploy scripts (Input.sol)
-- _solady_ for gas-sensitive use cases
-- IVersioned interface
 
 ## Setup
 
@@ -44,7 +33,7 @@ This repo utilizes versioned deployments. For more information on how to use for
 Smart contracts are deployed or upgraded using the following command:
 
 ```shell
-forge script script/1.0.0/Deploy.s.sol --broadcast --rpc-url <rpc_url> --verify
+forge script script/Deploy.s.sol --broadcast --rpc-url <rpc_url> --verify
 ```
 
 ## Docs

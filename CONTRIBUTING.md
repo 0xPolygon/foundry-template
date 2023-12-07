@@ -33,7 +33,7 @@ Follow these steps to set up your local environment for development:
 
 ## Pre-commit Hooks
 
-Follow the [installation steps](#install) to enable pre-commit hooks. To ensure consistency in our formatting we use `pre-commit` to check whether code was formatted properly and the documentation is up to date. Whenever a commit does not meet the checks implemented by pre-commit, the commit will fail and the pre-commit checks will modify the files to make the commits pass. Include these changes in your commit for the next commit attempt to succeed. On pull requests the CI checks whether all pre-commit hooks were run correctly.
+Follow the [installation steps](#install) to enable pre-commit hooks. To ensure consistency in our formatting `pre-commit` is used to check whether code was formatted properly and the documentation is up to date. Whenever a commit does not meet the checks implemented by pre-commit, the commit will fail and the pre-commit checks will modify the files to make the commits pass. Include these changes in your commit for the next commit attempt to succeed. On pull requests the CI checks whether all pre-commit hooks were run correctly.
 This repo includes the following pre-commit hooks that are defined in the `.pre-commit-config.yaml`:
 
 - `mixed-line-ending`: This hook ensures that all files have the same line endings (LF).
@@ -118,7 +118,7 @@ Interfaces should be the entrypoint for all contracts. When exploring the a cont
 
 ## Versioning
 
-This repo utilizes [semantic versioning](https://semver.org/) for smart contracts. An `IVersioned` interface is included in the [interfaces directory](src/interface/IVersioned.sol) exposing a unified versioning interface for all contracts. This version MUST be included in all contracts, whether they are upgradeable or not, to be able to easily match deployed versions. For example, in the case of a non-upgradeable contract one version could be deployed to a network and later a new version might be deployed to another network. The exposed `version()` function is also used by the [Deployment Info Generator](#deployment-info-generation) to extract information about the version.
+This repo utilizes [semantic versioning](https://semver.org/) for smart contracts. An `IVersioned` interface is included in the [interfaces directory](src/interface/IVersioned.sol) exposing a unified versioning interface for all contracts. This version MUST be included in all contracts, whether they are upgradeable or not, to be able to easily match deployed versions. For example, in the case of a non-upgradeable contract one version could be deployed to a network and later a new version might be deployed to another network. The exposed `version()` function is also used by the [Deployment Log Generator](lib/deployment-log-generator/README.md) to extract information about the version.
 
 Whenever contracts are modified, only the version of the changed contracts should be updated. Unmodified contracts should remain on the version of their last change.
 
@@ -126,15 +126,15 @@ Whenever contracts are modified, only the version of the changed contracts shoul
 
 ### Deployer Template
 
-This repo provides a deployer template for consistency between scripts and unit tests. For more information on how to use the template, check [here](#deployer-template-script).
+This repo provides a deployer template library for consistency between scripts and unit tests. For more information on how to use the template, check [here](lib/contract-deployer-template/README.md).
 
 ## Deployment
 
-This repo utilizes versioned deployments. Any changes to a contract should update the version of this specific contract. To deploy a new version of a contract, create a new deployment script in a directory named after the new version of the modified contracts (e.g., `1.0.0`). A script is provided that extracts deployment information from the `run-latest.json` file within the `broadcast` directory generated while the forge script runs. From this information a JSON and markdown file is generated containing various information about the deployment itself as well as past deployments.
+This repo utilizes versioned deployments. Any changes to a contract should update the version of this specific contract. A script is provided that extracts deployment information from the `run-latest.json` file within the `broadcast` directory generated while the forge script runs. From this information a JSON and markdown file is generated containing various information about the deployment itself as well as past deployments.
 
 ### Deployer Template
 
-This repo provides a deployer template for consistency between scripts and unit tests. For more information on how to use the template, check [here](#deployer-template-script).
+This repo provides a deployer template library for consistency between scripts and unit tests. For more information on how to use the template, check [here](lib/contract-deployer-template/README.md).
 
 ### Deployment
 
@@ -153,31 +153,7 @@ Deploy the contracts to one of the predefined networks by providing the accordin
 Including the `--verify` flag will verify deployed contracts on Etherscan. Define the appropriate environment variable for the Etherscan api key in the `.env` file.
 
 ```shell
-forge script script/1.0.0/Deploy.s.sol --broadcast --rpc-url <rpc_url> --verify
-```
-
-### Deployment Info Generation
-
-A JSON and Markdown file can be generated in the `deployments` directory containing various information about the deployment itself as well as past deployments using the following command. To find out more about versioning of contracts within this repo, check [here](CONTRIBUTING.md#versioning).
-
-```shell
-node script/util/extract.js <chainId> <version> <scriptName>
-```
-
-As the `chainId`, provide the chainId of the network the contracts were deployed to as a number. The supplied `version` should be the version of the modified contracts and the sub directory the deployment script is located in (e.g., `1.0.0`). The `scriptName` should be the file name of the script used in the deployment (e.g., `Deploy.s.sol`).
-
-When upgrading a contract, most of the times just the new implementation is deployed and the actual upgrade is triggered by a governance process or a multisig. The script will check whether the implementation of the upgraded contract was updated to the deployed version and if not, it will fail and not generate any files.
-
-## Deployer Template Script
-
-This repo provides a deployer template for consistency between scripts and unit tests.
-
-A deployer is an abstract contract, meant to be inherited in scripts and tests. A deployer provides type-checks and handles the creation, proxification, and initialization of the contract. It consists of two functions: `deploy<Contract>` and `deploy<Contract>_NoInit`.
-
-To generate a new deployer:
-
-```
-node script/util/generateDeployer.js <contractFile> [init params] <outputDir>
+forge script script/Deploy.s.sol --broadcast --rpc-url <rpc_url> --verify
 ```
 
 ## Releases
@@ -187,8 +163,9 @@ The release should include the following:
 
 - In case of a MAJOR version
   - changelog
-  - summary of new features
   - summary of breaking changes
+  - summary of new features
+  - summary of fixes
 - In case of a MINOR version
   - changelog
   - summary of new features
@@ -196,5 +173,5 @@ The release should include the following:
 - In case of a PATCH version
   - changelog
   - summary of fixes
-- Deployment information
-- TODO
+- Deployment information (can be copied from the generated log files)
+  - Addresses of the deployed contracts
