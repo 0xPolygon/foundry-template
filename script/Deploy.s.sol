@@ -2,11 +2,9 @@
 pragma solidity 0.8.23;
 
 import "forge-std/Script.sol";
-import "script/util/ScriptHelpers.sol";
-
 import "script/deployers/CounterDeployer.s.sol";
 
-contract Deploy is Script, ScriptHelpers, CounterDeployer {
+contract Deploy is Script, CounterDeployer {
     using stdJson for string;
 
     function run() public {
