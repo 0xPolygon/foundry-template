@@ -1,0 +1,15 @@
+/target
+/out
+/cache
+/coverage
+lcov.info
+.DS_Store
+.env
+.vscode
+.password
+
+broadcast/*/31337
+deployments/**/31337.*
+
+script/util/storage_check_cache
+script/util/storage_check_report
