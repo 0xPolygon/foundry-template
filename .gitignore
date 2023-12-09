@@ -11,5 +11,6 @@ lcov.info
 broadcast/*/31337
 deployments/**/31337.*
 
-script/util/storage_check_cache
-script/util/storage_check_report
+# storage layout checker library
+storage_check_cache
+storage_check_report
