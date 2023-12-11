@@ -16,3 +16,6 @@
 [submodule "lib/deployer-kit"]
 	path = lib/deployer-kit
 	url = https://github.com/0xPolygon/deployer-kit
+[submodule "lib/forge-chronicles"]
+	path = lib/forge-chronicles
+	url = https://github.com/0xPolygon/forge-chronicles
