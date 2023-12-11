@@ -10,12 +10,12 @@
 [submodule "lib/solady"]
 	path = lib/solady
 	url = https://github.com/vectorized/solady
-[submodule "lib/deployment-log-generator"]
-	path = lib/deployment-log-generator
-	url = https://github.com/0xPolygon/deployment-log-generator
-[submodule "lib/contract-deployer-template"]
-	path = lib/contract-deployer-template
-	url = https://github.com/0xPolygon/contract-deployer-template
-[submodule "lib/storage-layout-checker"]
-	path = lib/storage-layout-checker
-	url = https://github.com/0xPolygon/storage-layout-checker
+[submodule "lib/storage-delta"]
+	path = lib/storage-delta
+	url = https://github.com/0xPolygon/storage-delta
+[submodule "lib/deployer-kit"]
+	path = lib/deployer-kit
+	url = https://github.com/0xPolygon/deployer-kit
+[submodule "lib/forge-chronicles"]
+	path = lib/forge-chronicles
+	url = https://github.com/0xPolygon/forge-chronicles
