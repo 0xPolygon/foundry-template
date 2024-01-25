@@ -1,6 +1,5 @@
 #!/bin/bash
 
-foundryup
 # generate docs
 forge doc -b -o docs/autogen
 
