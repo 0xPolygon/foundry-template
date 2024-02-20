@@ -71,6 +71,13 @@ Any bug fixes should be developed on a separate branch. The naming convention fo
 
 The repo follows the official [Solidity Style Guide](https://docs.soliditylang.org/en/latest/style-guide.html). In addition to that, this repo also borrows the following rules from [OpenZeppelin](https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/GUIDELINES.md#solidity-conventions):
 
+- Natspec comments should use triple-slash comments (///).
+
+  ```solidity
+  /// @dev Function to do something
+  function doSomething() external {
+  ```
+
 - Internal or private state variables or functions should have an underscore prefix.
 
   ```solidity
