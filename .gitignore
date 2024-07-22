@@ -2,6 +2,10 @@
 cache/
 out/
 
+# Dependencies
+dependencies/
+node_modules/
+
 # Ignores development broadcast logs
 !/broadcast
 /broadcast/*/31337/
