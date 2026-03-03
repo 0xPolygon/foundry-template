@@ -2,35 +2,55 @@ name: test
 
 on:
   pull_request:
-    branches: [main, master, staging, dev, feat/**, fix/**]
+    branches: [main, master, staging, dev, "feat/**", "fix/**"]
 
 env:
   FOUNDRY_PROFILE: ci
 
 jobs:
-  check:
-    strategy:
-      fail-fast: true
-
-    name: Foundry project
+  build:
+    name: Build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: recursive
 
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
+
+      - name: Show Forge version
+        run: forge --version
+
+      - name: Build and check contract sizes
+        run: forge build --sizes
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v4
         with:
-          version: nightly
+          submodules: recursive
 
-      - name: Run Forge build
-        run: |
-          forge --version
-          forge build --sizes
-        id: build
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
 
-      - name: Run Forge tests
-        run: |
-          forge test -vvv
-        id: test
+      - name: Run tests
+        run: forge test -vvv
+
+  coverage:
+    name: Coverage
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+
+      - name: Generate coverage report
+        run: forge coverage

@@ -1,0 +1,30 @@
+name: Slither Analysis
+
+on:
+  pull_request:
+    branches: [main, master, staging, dev, "feat/**", "fix/**"]
+
+jobs:
+  analyze:
+    name: Slither
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Run Slither
+        uses: crytic/slither-action@v0.4.0
+        id: slither
+        with:
+          fail-on: none
+          sarif: results.sarif
+          slither-config: slither.config.json
+
+      - name: Upload SARIF file
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: results.sarif

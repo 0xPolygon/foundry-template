@@ -21,7 +21,7 @@ This template repo is a quick and easy way to get started with a new Solidity pr
 Follow these steps to set up your local environment:
 
 - [Install foundry](https://book.getfoundry.sh/getting-started/installation)
-- Install dependencies: `forge solodeer install`
+- Install dependencies: `forge soldeer install`
 - Build contracts: `forge build`
 - Test contracts: `forge test`
 
@@ -31,11 +31,17 @@ If you intend to develop on this repo, follow the steps outlined in [CONTRIBUTIN
 
 This repo utilizes versioned deployments. For more information on how to use forge scripts within the repo, check [here](CONTRIBUTING.md#deployment).
 
-Smart contracts are deployed or upgraded using the following command:
+Smart contracts are deployed using a simulation-first approach:
 
 ```shell
-forge script script/Deploy.s.sol --broadcast --rpc-url <rpc_url> --verify
+# 1. Simulate the deployment (no broadcast)
+forge script script/Deploy.s.sol --rpc-url <rpc_url>
+
+# 2. Deploy with transaction confirmation and verification
+forge script script/Deploy.s.sol --broadcast --rpc-url <rpc_url> --slow --verify
 ```
+
+For detailed deployment safety guidelines, see [CONTRIBUTING.md](CONTRIBUTING.md#deployment-safety).
 
 ## Docs
 

@@ -8,6 +8,7 @@
   - [Dev](#dev)
   - [Feature](#feature)
   - [Fix](#fix)
+- [Repository Setup](#repository-setup)
 - [Code Practices](#code-practices)
   - [Code Style](#code-style)
   - [Interfaces](#interfaces)
@@ -18,6 +19,7 @@
 - [Deployment](#deployment)
   - [Deployer Template](#deployer-template-1)
   - [Deployment](#deployment-1)
+  - [Deployment Safety](#deployment-safety)
   - [Deployment Info Generation](#deployment-info-generation)
 - [Deployer Template Script](#deployer-template-script)
 - [Releases](#releases)
@@ -64,6 +66,35 @@ Any new feature should be developed on a separate branch. The naming convention 
 ### Fix
 
 Any bug fixes should be developed on a separate branch. The naming convention for these branches is `fix/*`. Once the fix is complete, a pull request into the dev branch can be created.
+
+## Repository Setup
+
+When creating a new repository from this template, configure the following branch protection rules to enforce the branching strategy described above.
+
+### Main Branch Protection
+
+- Require pull request before merging
+  - Required approvals: 2 (at minimum)
+  - Require review from Code Owners (ensures security team review via CODEOWNERS)
+  - Dismiss stale reviews when new commits are pushed
+- Require status checks to pass before merging
+  - Required checks: `Build`, `Test`, `Coverage`, `Slither`, `pre-commit`
+- Require branches to be up to date before merging
+- Do not allow bypassing the above settings
+
+### Staging Branch Protection
+
+- Require pull request before merging
+  - Required approvals: 1
+- Require status checks to pass before merging
+  - Required checks: `Build`, `Test`, `Coverage`, `Slither`, `pre-commit`
+
+### Dev Branch Protection
+
+- Require pull request before merging
+  - Required approvals: 1
+- Require status checks to pass before merging
+  - Required checks: `Build`, `Test`, `pre-commit`
 
 ## Code Practices
 
@@ -148,20 +179,47 @@ This repo provides a deployer template library for consistency between scripts a
 This repo set up the following RPCs in the `foundry.toml` file:
 
 - mainnet: Ethereum Mainnet
-- goerli: Ethereum Goerli
 - sepolia: Ethereum Sepolia
 - polygon_pos: Polygon PoS
-- mumbai: Polygon Mumbai
-- polygon_zkevm: Polygon zkEVM
-- polygon_zkevm_testnet: Polygon zkEVM Testnet
+- amoy: Polygon Amoy
 
 To deploy the contracts, provide the `--broadcast` flag to the forge script command. Should the etherscan verification time out, it can be picked up again by replacing the `--broadcast` flag with `--resume`.
-Deploy the contracts to one of the predefined networks by providing the according key with the `--rpc-url` flag. Most of the predefined networks require the `INFURA_KEY` environment variable to be set in the `.env` file.
+Deploy the contracts to one of the predefined networks by providing the according key with the `--rpc-url` flag. Most of the predefined networks require the `ALCHEMY_KEY` environment variable to be set in the `.env` file.
 Including the `--verify` flag will verify deployed contracts on Etherscan. Define the appropriate environment variable for the Etherscan api key in the `.env` file.
 
 ```shell
-forge script script/Deploy.s.sol --broadcast --rpc-url <rpc_url> --verify
+forge script script/Deploy.s.sol --broadcast --rpc-url <rpc_url> --slow --verify
 ```
+
+### Deployment Safety
+
+Follow these steps for safe deployments:
+
+1. **Simulate first.** Always run the deployment script without `--broadcast` to verify the transaction sequence:
+   ```shell
+   forge script script/Deploy.s.sol --rpc-url <rpc_url>
+   ```
+
+2. **Review the simulation output.** Check the simulated transactions in the `broadcast/` directory. Verify:
+   - Correct contract addresses and constructor arguments
+   - Expected number of transactions
+   - Gas estimates are reasonable
+
+3. **Deploy with `--slow`.** When broadcasting, use the `--slow` flag to wait for each transaction to be confirmed before sending the next:
+   ```shell
+   forge script script/Deploy.s.sol --broadcast --rpc-url <rpc_url> --slow --verify
+   ```
+
+4. **Handle verification timeouts.** If Etherscan verification times out, resume it without redeploying:
+   ```shell
+   forge script script/Deploy.s.sol --resume --rpc-url <rpc_url> --verify
+   ```
+
+5. **Post-deployment.** After successful deployment:
+   - Generate deployment log files
+   - Transfer ownership if applicable
+   - Complete upgrade process if applicable
+   - Update the PR checklist items in the pull request template
 
 ## Releases
 
