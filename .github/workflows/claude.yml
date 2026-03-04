@@ -1,58 +1,129 @@
-name: Claude Code
+name: Claude Code Assistant (Solidity)
 
 on:
   issue_comment:
     types: [created]
   pull_request_review_comment:
     types: [created]
-  issues:
-    types: [opened, assigned]
   pull_request_review:
     types: [submitted]
+  issues:
+    types: [opened, assigned]
+  pull_request:
+    types: [opened, synchronize]
 
 jobs:
-  claude:
+  # ─── 1. Claude Code Assistant (triggered by @claude mentions) ─────────────
+  claude-assistant:
+    name: Claude Code
+    runs-on: ubuntu-latest
     if: |
       (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude')) ||
       (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@claude')) ||
       (github.event_name == 'pull_request_review' && contains(github.event.review.body, '@claude')) ||
       (github.event_name == 'issues' && (contains(github.event.issue.body, '@claude') || contains(github.event.issue.title, '@claude')))
-    runs-on: ubuntu-latest
     permissions:
       contents: write
       pull-requests: write
       issues: write
       id-token: write
-      actions: read # Required for Claude to read CI results on PRs
+
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v6
+      - uses: actions/checkout@v4
         with:
+          submodules: recursive
           fetch-depth: 1
 
+      # Make Foundry & Solhint available to Claude so it can run them
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+
+      - name: Install Solhint
+        run: npm install -g solhint
+
       - name: Run Claude Code
-        id: claude
         uses: anthropics/claude-code-action@v1
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          claude_args: |
+            --max-turns 15
+            --allowedTools "Bash(forge build),Bash(forge test*),Bash(forge fmt*),Bash(forge coverage*),Bash(forge snapshot*),Bash(solhint*),Read,Edit,Write,Glob,Grep"
+            --system-prompt "You are an expert Solidity and EVM smart contract engineer.
 
-          # Optional: Customize the trigger phrase (default: @claude)
-          # trigger_phrase: "/claude"
+            CONTEXT:
+            - This repo uses Foundry (forge, cast, anvil). Tests are in test/, contracts in src/, scripts in script/.
+            - Dependencies are managed as git submodules in lib/.
+            - Always check forge build and forge test pass before suggesting changes.
+            - Solidity version: check foundry.toml or pragma statements before assuming.
 
-          # Optional: Trigger when specific user is assigned to an issue
-          # assignee_trigger: "claude-bot"
+            SECURITY RULES (non-negotiable):
+            - Never suggest patterns that bypass checks-effects-interactions.
+            - Flag any reentrancy, integer overflow, access control, or oracle manipulation risks.
+            - Prefer OpenZeppelin battle-tested libraries over custom implementations.
+            - Never suggest storing private keys or secrets in contract state or scripts.
+            - When reviewing upgradeable contracts, always check storage layout collisions.
 
-          # Optional: Configure Claude's behavior with CLI arguments
-          # claude_args: |
-          #   --model claude-opus-4-1-20250805
-          #   --max-turns 10
-          #   --allowedTools "Bash(npm install),Bash(npm run build),Bash(npm run test:*),Bash(npm run lint:*)"
-          #   --system-prompt "Follow our coding standards. Ensure all new code has tests. Use TypeScript for new files."
+            CODE QUALITY:
+            - Write Solidity tests (not just JS/TS) using forge-std.
+            - Include fuzz tests (vm.assume, bound()) for numeric inputs.
+            - Add NatSpec comments (@notice, @param, @return) on all public functions.
+            - Report gas impact of suggested changes using forge snapshot.
+            - Follow the Checks-Effects-Interactions pattern strictly.
 
-          # Optional: Advanced settings configuration
-          # settings: |
-          #   {
-          #     "env": {
-          #       "NODE_ENV": "test"
-          #     }
-          #   }
+            GAS OPTIMISATION:
+            - Suggest packing storage slots where safe to do so.
+            - Prefer custom errors over revert strings.
+            - Use immutable and constant where appropriate.
+            - Flag unnecessary SLOADs in loops."
+
+  # ─── 3. Automated security review on every PR ─────────────────────────────
+  claude-security-review:
+    name: Claude Security Review
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' && github.event.action == 'opened'
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 2
+
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+
+      - name: Automated Claude Security Review
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          prompt: |
+            REPO: ${{ github.repository }}
+            PR NUMBER: ${{ github.event.pull_request.number }}
+            BRANCH: ${{ github.head_ref }}
+
+            Perform a focused Solidity security and gas review of the changes in this PR.
+            Use `git diff HEAD~1` to see what changed.
+
+            Structure your review as:
+
+            ## 🔴 Critical / High (block merge)
+            Reentrancy, access control bypasses, integer issues, fund loss vectors.
+
+            ## 🟡 Medium (should fix)
+            Logic bugs, incorrect event emissions, missing input validation.
+
+            ## 🟢 Low / Informational
+            Gas optimisations, NatSpec gaps, style issues.
+
+            ## ✅ Gas Report Delta
+            Run `forge snapshot --diff` if applicable and summarise changes.
+
+            If there are no issues in a category, write "None found."
+            Be concise and actionable. Cite the file and line number for each finding.
+          claude_args: |
+            --max-turns 10
+            --allowedTools "Bash(forge build),Bash(forge test*),Bash(forge snapshot*),Bash(git diff*),Read,Glob,Grep"
