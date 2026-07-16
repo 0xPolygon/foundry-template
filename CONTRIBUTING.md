@@ -27,7 +27,7 @@
 Follow these steps to set up your local environment for development:
 
 - [Install foundry](https://book.getfoundry.sh/getting-started/installation)
-- Install dependencies: `forge install`
+- Install dependencies: `forge soldeer install`
 - [Install pre-commit](https://pre-commit.com/#installation)
 - Install pre commit hooks: `pre-commit install`
 
@@ -147,16 +147,14 @@ This repo provides a deployer template library for consistency between scripts a
 
 This repo set up the following RPCs in the `foundry.toml` file:
 
+- anvil: Local Anvil node
 - mainnet: Ethereum Mainnet
-- goerli: Ethereum Goerli
 - sepolia: Ethereum Sepolia
 - polygon_pos: Polygon PoS
-- mumbai: Polygon Mumbai
-- polygon_zkevm: Polygon zkEVM
-- polygon_zkevm_testnet: Polygon zkEVM Testnet
+- amoy: Polygon Amoy
 
 To deploy the contracts, provide the `--broadcast` flag to the forge script command. Should the etherscan verification time out, it can be picked up again by replacing the `--broadcast` flag with `--resume`.
-Deploy the contracts to one of the predefined networks by providing the according key with the `--rpc-url` flag. Most of the predefined networks require the `INFURA_KEY` environment variable to be set in the `.env` file.
+Deploy the contracts to one of the predefined networks by providing the according key with the `--rpc-url` flag. Most of the predefined networks require the `ALCHEMY_KEY` environment variable to be set in the `.env` file.
 Including the `--verify` flag will verify deployed contracts on Etherscan. Define the appropriate environment variable for the Etherscan api key in the `.env` file.
 
 ```shell

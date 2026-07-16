@@ -1,20 +1,20 @@
 [[dependencies]]
 name = "@openzeppelin-contracts"
-version = "5.5.0"
-url = "https://soldeer-revisions.s3.amazonaws.com/@openzeppelin-contracts/5_5_0_01-11-2025_09:56:40_contracts.zip"
-checksum = "2ee78837130cf06b456d9ef7ab70753685d9c1c9c2c5b70f24bd4c16695d0337"
-integrity = "da8336cf949f0e0667ae8360af849681e3a3e76d7e61e7a86b1a3414a158aeea"
+version = "5.6.1"
+url = "https://soldeer-revisions.s3.amazonaws.com/@openzeppelin-contracts/5_6_1_15-03-2026_09:19:50_contracts.zip"
+checksum = "a3b6bc661be858c7c27f60a1708cbebe8c71034b4cc1e9fe270d0a05b069352f"
+integrity = "bce03af7ada1eee21a7fff393f238bcd7cd75a022a4db55ffb6b0dbb32433d35"
 
 [[dependencies]]
 name = "@openzeppelin-contracts-upgradeable"
-version = "5.5.0"
-url = "https://soldeer-revisions.s3.amazonaws.com/@openzeppelin-contracts-upgradeable/5_5_0_01-11-2025_09:56:46_contracts-upgradeable.zip"
-checksum = "6360df12918b82436dfd68a4a7d9b962aa4d4b0b6bf323ecbd400b9eca5e5974"
-integrity = "ede37ded73bb7dff1325cdfcc124d83afff3d92e646a9418d79ac0d6a9721b05"
+version = "5.6.0"
+url = "https://soldeer-revisions.s3.amazonaws.com/@openzeppelin-contracts-upgradeable/5_6_0_27-02-2026_07:52:01_contracts-upgradeable.zip"
+checksum = "9cb4f3f6d82682588f793dd32e43962d3e2f1c017f9291f11236567364bcf7f8"
+integrity = "2f539b6241258fc3c127c97225b3cb1b5e9225e422d2c1cb233c52a6f5c29002"
 
 [[dependencies]]
 name = "forge-std"
-version = "1.11.0"
-url = "https://soldeer-revisions.s3.amazonaws.com/forge-std/1_11_0_09-10-2025_06:23:22_forge-std-1.11.zip"
-checksum = "0290ef84c693dc9086f98f6a9b4a69dc5c2b6aa1cfe10a989bd1def1a456c099"
-integrity = "84aa7d32f8c7329468cf16f31f0f74e68072e634fdbde98f3bb00c6b136103b2"
+version = "1.16.2"
+url = "https://soldeer-revisions.s3.amazonaws.com/forge-std/1_16_2_03-07-2026_07:37:45_forge-std-1.16.zip"
+checksum = "405dccc9d60d753f6abc412b4adf0359f4390f65dbadbbb277a12b4946ed8969"
+integrity = "5fb4325b60d7d4194bd0481e2f94398cf1d9c6561dd12a66fb2748ef4a68205f"

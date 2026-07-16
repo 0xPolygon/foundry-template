@@ -1,12 +1,14 @@
 ## Template Repo (Foundry)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: Apache-2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 [![CI Status](../../actions/workflows/test.yaml/badge.svg)](../../actions)
 
 This template repo is a quick and easy way to get started with a new Solidity project. It comes with a number of features that are useful for developing and deploying smart contracts. Such as:
 
 - Pre-commit hooks for formatting, auto generated documentation, and more
-- Various libraries with useful contracts (OpenZeppelin, Solady) and libraries (Deployment log generation, storage checks, deployer templates)
+- Dependencies managed via [Soldeer](https://soldeer.xyz/) (OpenZeppelin contracts and upgradeable contracts, forge-std)
+- Deployer templates for consistency between scripts and unit tests, and deployment log generation
 
 #### Table of Contents
 
@@ -21,7 +23,7 @@ This template repo is a quick and easy way to get started with a new Solidity pr
 Follow these steps to set up your local environment:
 
 - [Install foundry](https://book.getfoundry.sh/getting-started/installation)
-- Install dependencies: `forge install`
+- Install dependencies: `forge soldeer install`
 - Build contracts: `forge build`
 - Test contracts: `forge test`
 
@@ -63,4 +65,4 @@ Unless you explicitly state otherwise, any contribution intentionally submitted 
 
 ---
 
-© 2023 PT Services DMCC
+© 2026 PT Services DMCC

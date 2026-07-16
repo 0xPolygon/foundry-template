@@ -1,6 +1,6 @@
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.5.0
+    rev: v6.0.0
     hooks:
       - id: mixed-line-ending
         args: ["--fix=lf"]
@@ -13,7 +13,7 @@ repos:
         description: Format solidity code with `forge fmt`
         language: system
         entry: forge fmt
-        exclude: "^lib/"
+        exclude: "^dependencies/"
         pass_filenames: true
       - id: doc
         name: Generate documentation
@@ -22,9 +22,10 @@ repos:
         # generates docs and unstages files if only the commit hash changed within the file, this way only when the documentation is updated, the documentation needs to be regenerated and only the changed files are pushed
         entry: "script/util/doc_gen.sh"
         pass_filenames: false
-  - repo: https://github.com/pre-commit/mirrors-prettier
-    rev: "v3.0.3"
-    hooks:
       - id: prettier
         name: Format non solidity files with prettier
+        language: node
+        entry: prettier --write --ignore-unknown
+        additional_dependencies: ["prettier@3.6.2"]
         exclude: "^docs/autogen"
+        types: [text]

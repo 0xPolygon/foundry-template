@@ -2,21 +2,29 @@
 src = "src"
 out = "out"
 libs = ["lib", "dependencies"]
+solc = "0.8.34"
+evm_version = "prague"
 optimizer = true
 via_ir = true
 verbosity = 2
 ffi = true
 
 remappings = [
-  "@openzeppelin-contracts-upgradeable/=dependencies/@openzeppelin-contracts-upgradeable-5.5.0",
-  "@openzeppelin/contracts/=dependencies/@openzeppelin-contracts-5.5.0",
-  "forge-std/=dependencies/forge-std-1.11.0/src",
+  "@openzeppelin-contracts-upgradeable/=dependencies/@openzeppelin-contracts-upgradeable-5.6.0",
+  "@openzeppelin/contracts/=dependencies/@openzeppelin-contracts-5.6.1",
+  "forge-std/=dependencies/forge-std-1.16.2/src",
 ]
 
 [dependencies]
-forge-std = "1.11.0"
-"@openzeppelin-contracts" = "5.5.0"
-"@openzeppelin-contracts-upgradeable" = "5.5.0"
+forge-std = "1.16.2"
+"@openzeppelin-contracts" = "5.6.1"
+"@openzeppelin-contracts-upgradeable" = "5.6.0"
+
+[soldeer]
+remappings_generate = false
+
+[profile.ci]
+fuzz = { runs = 5000 }
 
 [fmt]
 line_length = 160

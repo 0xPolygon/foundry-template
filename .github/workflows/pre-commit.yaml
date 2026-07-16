@@ -9,12 +9,16 @@ jobs:
   pre-commit:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v2
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
         with:
-          submodules: recursive
+          python-version: "3.12"
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: stable
+      - name: Install dependencies
+        run: forge soldeer install
       - name: Install pre-commit
         run: pip install pre-commit
       - name: Run pre-commit
